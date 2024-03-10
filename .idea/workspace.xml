@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: base logic for auth methods">
-      <change beforePath="$PROJECT_DIR$/cmd/sso/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/sso/main.go" afterDir="false" />
+    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: graceful shutdown">
       <change beforePath="$PROJECT_DIR$/internal/grpc/auth/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpc/auth/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -123,7 +122,8 @@
     <MESSAGE value="refactor: config" />
     <MESSAGE value="remove: unused logger code" />
     <MESSAGE value="add: base logic for auth methods" />
-    <option name="LAST_COMMIT_MESSAGE" value="add: base logic for auth methods" />
+    <MESSAGE value="add: graceful shutdown" />
+    <option name="LAST_COMMIT_MESSAGE" value="add: graceful shutdown" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
