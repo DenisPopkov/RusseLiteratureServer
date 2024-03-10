@@ -46,6 +46,8 @@ func MustLoadPath(configPath string) *Config {
 }
 
 // fetchConfigPath fetches config path from command line flag or environment variable.
+// Priority: flag > env > default.
+// Default value is empty string.
 func fetchConfigPath() string {
 	var res string
 
