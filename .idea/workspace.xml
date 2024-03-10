@@ -4,8 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="refactor: config">
-      <change beforePath="$PROJECT_DIR$/internal/lib/logger/handlers/slogdiscard/slogdiscard.go" beforeDir="false" />
+    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="remove: unused logger code">
+      <change afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/app/grpc/app.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/grpc/auth/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/sso/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/sso/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/list" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -120,7 +127,8 @@
     <MESSAGE value="fix: package name" />
     <MESSAGE value="add: multicolor logger" />
     <MESSAGE value="refactor: config" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: config" />
+    <MESSAGE value="remove: unused logger code" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove: unused logger code" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
