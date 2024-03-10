@@ -142,9 +142,23 @@ func (a *Auth) RegisterNewUser(
 	return id, nil
 }
 
-func (a *Auth) IsAdmin(
-	ctx context.Context,
-	userID int64,
-) (bool, error) {
-	panic("not implemented")
+// IsAdmin checks if user is admin.
+func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
+	const op = "auth.IsAdmin"
+
+	log := a.log.With(
+		slog.String("op", op),
+		slog.Int64("user_id", userID),
+	)
+
+	log.Info("checking if user is admin")
+
+	isAdmin, err := a.userProvider.IsAdmin(ctx, userID)
+	if err != nil {
+		return false, fmt.Errorf("%s: %w", op, err)
+	}
+
+	log.Info("checked if user is admin", slog.Bool("is_admin", isAdmin))
+
+	return isAdmin, nil
 }
