@@ -31,7 +31,6 @@ func MustLoad() *Config {
 }
 
 func MustLoadPath(configPath string) *Config {
-	// check if file exists
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		panic("config file does not exist: " + configPath)
 	}
