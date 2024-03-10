@@ -21,10 +21,6 @@ func main() {
 		slog.Any("cfg", cfg),
 		slog.Int("port", cfg.GRPC.Port),
 	)
-
-	log.Debug("debug message")
-	log.Error("error message")
-	log.Warn("warn message")
 }
 
 func setupLogger(env string) *slog.Logger {
