@@ -4,8 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="refactor: tests">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/af1bbccc-4453-413e-a177-be0795937623.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/af1bbccc-4453-413e-a177-be0795937623.xml" afterDir="false" />
+    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="update: gitignore">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/RusseLiteratureServer.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/config.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +32,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="ROOT_SYNC" value="SYNC" />
   </component>
   <component name="GoLibraries">
     <option name="urls">
@@ -92,6 +97,8 @@
       <module name="sso" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="FILE" />
+      <kind value="PACKAGE" />
+      <package value="sso" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <method v="2" />
@@ -147,18 +154,6 @@
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
       <module name="sso" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind value="DIRECTORY" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go test sso/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="sso" />
-      <working_directory value="$PROJECT_DIR$/tests" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="sso/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />

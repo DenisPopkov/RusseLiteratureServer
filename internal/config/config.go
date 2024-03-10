@@ -2,10 +2,9 @@ package config
 
 import (
 	"flag"
+	"github.com/ilyakaznacheev/cleanenv"
 	"os"
 	"time"
-
-	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {

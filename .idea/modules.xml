@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../protos/.idea/protos.iml" filepath="$PROJECT_DIR$/../protos/.idea/protos.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/sso.iml" filepath="$PROJECT_DIR$/.idea/sso.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/RusseLiteratureServer.iml" filepath="$PROJECT_DIR$/.idea/RusseLiteratureServer.iml" />
     </modules>
   </component>
 </project>

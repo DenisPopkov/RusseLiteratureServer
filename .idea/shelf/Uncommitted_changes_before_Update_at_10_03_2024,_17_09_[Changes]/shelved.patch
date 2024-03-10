@@ -1,0 +1,89 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"AutoImportSettings\">\n    <option name=\"autoReloadType\" value=\"ALL\" />\n  </component>\n  <component name=\"ChangeListManager\">\n    <list default=\"true\" id=\"4da29625-0ac0-42b6-8466-ebec231f1e9f\" name=\"Changes\" comment=\"fix: package name\">\n      <change beforePath=\"$PROJECT_DIR$/../protos/go.mod\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/../protos/go.mod\" afterDir=\"false\" />\n    </list>\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\n  </component>\n  <component name=\"FileTemplateManagerImpl\">\n    <option name=\"RECENT_TEMPLATES\">\n      <list>\n        <option value=\"Go File\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"GOROOT\" url=\"file://$USER_HOME$/sdk/go1.22.1\" />\n  <component name=\"Git.Settings\">\n    <option name=\"RECENT_BRANCH_BY_REPOSITORY\">\n      <map>\n        <entry key=\"$PROJECT_DIR$\" value=\"develop\" />\n      </map>\n    </option>\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/../protos\" />\n  </component>\n  <component name=\"GoLibraries\">\n    <option name=\"urls\">\n      <list>\n        <option value=\"file://$PROJECT_DIR$\" />\n        <option value=\"file://$PROJECT_DIR$/../protos\" />\n      </list>\n    </option>\n  </component>\n  <component name=\"ProjectColorInfo\">{\n  &quot;associatedIndex&quot;: 5\n}</component>\n  <component name=\"ProjectId\" id=\"2dQlXNUsusC9kUYKgGXcl8p5kvN\" />\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\n  <component name=\"ProjectViewState\">\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\n    <option name=\"showLibraryContents\" value=\"true\" />\n  </component>\n  <component name=\"PropertiesComponent\"><![CDATA[{\n  \"keyToString\": {\n    \"DefaultGoTemplateProperty\": \"Go File\",\n    \"Go Build.go build sso/cmd/sso.executor\": \"Run\",\n    \"RunOnceActivity.OpenProjectViewOnStart\": \"true\",\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\n    \"RunOnceActivity.go.formatter.settings.were.checked\": \"true\",\n    \"RunOnceActivity.go.migrated.go.modules.settings\": \"true\",\n    \"RunOnceActivity.go.modules.automatic.dependencies.download\": \"true\",\n    \"RunOnceActivity.go.modules.go.list.on.any.changes.was.set\": \"true\",\n    \"git-widget-placeholder\": \"main\",\n    \"go.import.settings.migrated\": \"true\",\n    \"last_opened_file_path\": \"/Users/denispopkov/GolandProjects/sso\",\n    \"node.js.detected.package.eslint\": \"true\",\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\n    \"nodejs_package_manager_path\": \"npm\",\n    \"settings.editor.selected.configurable\": \"goland.project.structure\"\n  }\n}]]></component>\n  <component name=\"RunManager\">\n    <configuration default=\"true\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\">\n      <module name=\"sso\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind />\n      <directory value=\"$PROJECT_DIR$\" />\n      <filePath value=\"$PROJECT_DIR$\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration name=\"go build sso/cmd/sso\" type=\"GoApplicationRunConfiguration\" factoryName=\"Go Application\" temporary=\"true\" nameIsGenerated=\"true\">\n      <module name=\"sso\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind value=\"PACKAGE\" />\n      <package value=\"sso/cmd/sso\" />\n      <directory value=\"$PROJECT_DIR$\" />\n      <filePath value=\"$PROJECT_DIR$/cmd/sso/main.go\" />\n      <method v=\"2\" />\n    </configuration>\n    <configuration default=\"true\" type=\"GoTestRunConfiguration\" factoryName=\"Go Test\">\n      <module name=\"sso\" />\n      <working_directory value=\"$PROJECT_DIR$\" />\n      <kind />\n      <directory value=\"$PROJECT_DIR$\" />\n      <filePath value=\"$PROJECT_DIR$\" />\n      <framework value=\"gotest\" />\n      <method v=\"2\" />\n    </configuration>\n    <recent_temporary>\n      <list>\n        <item itemvalue=\"Go Build.go build sso/cmd/sso\" />\n      </list>\n    </recent_temporary>\n  </component>\n  <component name=\"SharedIndexes\">\n    <attachedChunks>\n      <set>\n        <option value=\"bundled-gosdk-2946fb9b3188-155fe4b6e3a0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.14475.38\" />\n      </set>\n    </attachedChunks>\n  </component>\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\n  <component name=\"TypeScriptGeneratedFilesManager\">\n    <option name=\"version\" value=\"3\" />\n  </component>\n  <component name=\"VcsManagerConfiguration\">\n    <MESSAGE value=\"init: project\" />\n    <MESSAGE value=\"fix: module proto name\" />\n    <MESSAGE value=\"add: task\" />\n    <MESSAGE value=\"fix: package name\" />\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"fix: package name\" />\n  </component>\n  <component name=\"VgoProject\">\n    <settings-migrated>true</settings-migrated>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision a9b46626a5313dace134940baaa0a0d47fd300f3)
++++ b/.idea/workspace.xml	(date 1710068978153)
+@@ -4,9 +4,7 @@
+     <option name="autoReloadType" value="ALL" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="fix: package name">
+-      <change beforePath="$PROJECT_DIR$/../protos/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/../protos/go.mod" afterDir="false" />
+-    </list>
++    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="fix: package name" />
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -27,6 +25,7 @@
+       </map>
+     </option>
+     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../protos" />
++    <option name="ROOT_SYNC" value="SYNC" />
+   </component>
+   <component name="GoLibraries">
+     <option name="urls">
+@@ -45,30 +44,31 @@
+     <option name="hideEmptyMiddlePackages" value="true" />
+     <option name="showLibraryContents" value="true" />
+   </component>
+-  <component name="PropertiesComponent"><![CDATA[{
+-  "keyToString": {
+-    "DefaultGoTemplateProperty": "Go File",
+-    "Go Build.go build sso/cmd/sso.executor": "Run",
+-    "RunOnceActivity.OpenProjectViewOnStart": "true",
+-    "RunOnceActivity.ShowReadmeOnStart": "true",
+-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
+-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+-    "git-widget-placeholder": "main",
+-    "go.import.settings.migrated": "true",
+-    "last_opened_file_path": "/Users/denispopkov/GolandProjects/sso",
+-    "node.js.detected.package.eslint": "true",
+-    "node.js.selected.package.eslint": "(autodetect)",
+-    "nodejs_package_manager_path": "npm",
+-    "settings.editor.selected.configurable": "goland.project.structure"
++  <component name="PropertiesComponent">{
++  &quot;keyToString&quot;: {
++    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
++    &quot;Go Build.go build sso/cmd/sso.executor&quot;: &quot;Run&quot;,
++    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
++    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
++    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
++    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
++    &quot;last_opened_file_path&quot;: &quot;/Users/denispopkov/GolandProjects/sso&quot;,
++    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
++    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
++    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
++    &quot;settings.editor.selected.configurable&quot;: &quot;goland.project.structure&quot;
+   }
+-}]]></component>
++}</component>
+   <component name="RunManager">
+     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+       <module name="sso" />
+       <working_directory value="$PROJECT_DIR$" />
+-      <kind />
++      <kind value="PACKAGE" />
++      <package value="sso" />
+       <directory value="$PROJECT_DIR$" />
+       <filePath value="$PROJECT_DIR$" />
+       <method v="2" />
+@@ -85,7 +85,7 @@
+     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+       <module name="sso" />
+       <working_directory value="$PROJECT_DIR$" />
+-      <kind />
++      <kind value="DIRECTORY" />
+       <directory value="$PROJECT_DIR$" />
+       <filePath value="$PROJECT_DIR$" />
+       <framework value="gotest" />
