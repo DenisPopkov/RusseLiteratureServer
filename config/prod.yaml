@@ -1,6 +1,6 @@
 env: "prod"
 storage_path: "/root/apps/grpc-auth/sso.db"
 grpc:
-  port: 8080
+  port: 8082
   timeout: 5s
 migrations_path: "./migrations"

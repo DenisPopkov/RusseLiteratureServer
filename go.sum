@@ -8,6 +8,8 @@ github.com/DenisPopkov/protos v0.0.5 h1:H/44YjzAU1G7/m+6O5bY8qIZDzdfBWSIlgzcTUan
 github.com/DenisPopkov/protos v0.0.5/go.mod h1:QRg38W/jsiB4AYv8PvGA3kuPmLBT1cE8hclZt51g7QM=
 github.com/DenisPopkov/protos v0.0.6 h1:T7/DEkEdnkWuZ5gU0RT0VHrnJUP0Cazp4MwMqb7Qe80=
 github.com/DenisPopkov/protos v0.0.6/go.mod h1:QRg38W/jsiB4AYv8PvGA3kuPmLBT1cE8hclZt51g7QM=
+github.com/DenisPopkov/protos v0.0.7 h1:uxzdoj/CXJGTqNbMjVdW4XXxSSeypmAueCNFp47uS9A=
+github.com/DenisPopkov/protos v0.0.7/go.mod h1:QRg38W/jsiB4AYv8PvGA3kuPmLBT1cE8hclZt51g7QM=
 github.com/brianvoe/gofakeit/v6 v6.28.0 h1:Xib46XXuQfmlLS2EXRuJpqcw8St6qSZz75OUo0tgAW4=
 github.com/brianvoe/gofakeit/v6 v6.28.0/go.mod h1:Xj58BMSnFqcn/fAQeSK+/PLtC5kSb7FJIq4JyGa8vEs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

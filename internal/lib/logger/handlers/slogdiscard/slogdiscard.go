@@ -6,15 +6,7 @@ import (
 	"golang.org/x/exp/slog"
 )
 
-func NewDiscardLogger() *slog.Logger {
-	return slog.New(NewDiscardHandler())
-}
-
 type DiscardHandler struct{}
-
-func NewDiscardHandler() *DiscardHandler {
-	return &DiscardHandler{}
-}
 
 func (h *DiscardHandler) Handle(_ context.Context, _ slog.Record) error {
 	// Просто игнорируем запись журнала

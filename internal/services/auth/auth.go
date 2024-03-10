@@ -25,7 +25,6 @@ var (
 	ErrInvalidCredentials = errors.New("invalid credentials")
 )
 
-//go:generate go run github.com/vektra/mockery/v2@v2.28.2 --name=URLSaver
 type UserSaver interface {
 	SaveUser(
 		ctx context.Context,
@@ -36,7 +35,6 @@ type UserSaver interface {
 
 type UserProvider interface {
 	User(ctx context.Context, phone string) (models.User, error)
-	IsAdmin(ctx context.Context, userID int64) (bool, error)
 }
 
 type AppProvider interface {
@@ -140,25 +138,4 @@ func (a *Auth) RegisterNewUser(ctx context.Context, phone string, pass string) (
 	}
 
 	return id, nil
-}
-
-// IsAdmin checks if user is admin.
-func (a *Auth) IsAdmin(ctx context.Context, userID int64) (bool, error) {
-	const op = "Auth.IsAdmin"
-
-	log := a.log.With(
-		slog.String("op", op),
-		slog.Int64("user_id", userID),
-	)
-
-	log.Info("checking if user is admin")
-
-	isAdmin, err := a.usrProvider.IsAdmin(ctx, userID)
-	if err != nil {
-		return false, fmt.Errorf("%s: %w", op, err)
-	}
-
-	log.Info("checked if user is admin", slog.Bool("is_admin", isAdmin))
-
-	return isAdmin, nil
 }
