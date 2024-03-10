@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: register and admin handler">
-      <change afterPath="$PROJECT_DIR$/internal/domain/models/app.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/domain/models/user.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/services/auth/auth.go" afterDir="false" />
+    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: register new user method">
+      <change afterPath="$PROJECT_DIR$/internal/lib/jwt/jwt.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/services/storage/storage.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/auth/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,6 +118,17 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init: project" />
     <MESSAGE value="fix: module proto name" />
@@ -129,7 +141,8 @@
     <MESSAGE value="add: graceful shutdown" />
     <MESSAGE value="add: login method logic" />
     <MESSAGE value="add: register and admin handler" />
-    <option name="LAST_COMMIT_MESSAGE" value="add: register and admin handler" />
+    <MESSAGE value="add: register new user method" />
+    <option name="LAST_COMMIT_MESSAGE" value="add: register new user method" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

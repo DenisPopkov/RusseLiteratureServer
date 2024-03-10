@@ -2,11 +2,14 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
 	"sso/internal/domain/models"
+	"sso/internal/lib/jwt"
 	"sso/internal/lib/logger/sl"
+	"sso/internal/services/storage"
 	"time"
 )
 
@@ -15,7 +18,7 @@ type Auth struct {
 	userSaver    UserSaver
 	userProvider UserProvider
 	appProvider  AppProvider
-	tokenTTl     time.Duration
+	tokenTTL     time.Duration
 }
 
 type UserSaver interface {
@@ -35,6 +38,10 @@ type AppProvider interface {
 	App(ctx context.Context, appID int) (models.App, error)
 }
 
+var (
+	ErrInvalidCredentials = errors.New("invalid credentials")
+)
+
 // New returns a new instance of the Auth service
 func New(
 	log *slog.Logger,
@@ -48,7 +55,7 @@ func New(
 		userProvider: userProvider,
 		log:          log,
 		appProvider:  appProvider,
-		tokenTTl:     tokenTTl,
+		tokenTTL:     tokenTTl,
 	}
 }
 
@@ -58,7 +65,49 @@ func (a *Auth) Login(
 	password string,
 	appID int,
 ) (string, error) {
-	panic("not implemented")
+	const op = "auth.Login"
+
+	log := a.log.With(
+		slog.String("op", op),
+		slog.String("username", phoneNumber),
+	)
+
+	log.Info("attempting to login user")
+
+	user, err := a.userProvider.User(ctx, phoneNumber)
+	if err != nil {
+		if errors.Is(err, storage.ErrUserNotFound) {
+			a.log.Warn("user not found", sl.Err(err))
+
+			return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+		}
+
+		a.log.Error("failed to get user", sl.Err(err))
+
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword(user.PassHash, []byte(password)); err != nil {
+		a.log.Info("invalid credentials", sl.Err(err))
+
+		return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
+	}
+
+	app, err := a.appProvider.App(ctx, appID)
+	if err != nil {
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	log.Info("user logged in successfully")
+
+	token, err := jwt.NewToken(user, app, a.tokenTTL)
+	if err != nil {
+		a.log.Error("failed to generate token", sl.Err(err))
+
+		return "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	return token, nil
 }
 
 func (a *Auth) RegisterNewUser(
