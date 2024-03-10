@@ -16,7 +16,7 @@ const (
 	appID      = 1
 	appSecret  = "test-secret"
 
-	passDefaultLen = 10
+	passDefaultLen = 8
 )
 
 func TestRegisterLogin_Login_HappyPath(t *testing.T) {
