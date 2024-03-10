@@ -3,20 +3,19 @@ package suite
 import (
 	"context"
 	ssov1 "github.com/DenisPopkov/protos/gen/go/sso"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"os"
 	"sso/internal/config"
 	"strconv"
 	"testing"
-
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Suite struct {
-	*testing.T
-	Cfg        *config.Config
-	AuthClient ssov1.AuthClient
+	*testing.T                  // Потребуется для вызова методов *testing.T внутри Suite
+	Cfg        *config.Config   // Конфигурация приложения
+	AuthClient ssov1.AuthClient // Клиент для взаимодействия с gRPC-сервером
 }
 
 const (
@@ -39,7 +38,7 @@ func New(t *testing.T) (context.Context, *Suite) {
 
 	cc, err := grpc.DialContext(context.Background(),
 		grpcAddress(cfg),
-		grpc.WithTransportCredentials(insecure.NewCredentials()))
+		grpc.WithTransportCredentials(insecure.NewCredentials())) // Используем insecure-коннект для тестов
 	if err != nil {
 		t.Fatalf("grpc server connection failed: %v", err)
 	}

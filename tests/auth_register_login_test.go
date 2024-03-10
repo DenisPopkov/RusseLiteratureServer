@@ -22,18 +22,18 @@ const (
 func TestRegisterLogin_Login_HappyPath(t *testing.T) {
 	ctx, st := suite.New(t)
 
-	phoneNumber := gofakeit.Phone()
+	phone := gofakeit.Phone()
 	pass := randomFakePassword()
 
 	respReg, err := st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-		PhoneNumber: phoneNumber,
+		PhoneNumber: phone,
 		Password:    pass,
 	})
 	require.NoError(t, err)
 	assert.NotEmpty(t, respReg.GetUserId())
 
 	respLogin, err := st.AuthClient.Login(ctx, &ssov1.LoginRequest{
-		PhoneNumber: phoneNumber,
+		PhoneNumber: phone,
 		Password:    pass,
 		AppId:       appID,
 	})
@@ -53,7 +53,7 @@ func TestRegisterLogin_Login_HappyPath(t *testing.T) {
 	require.True(t, ok)
 
 	assert.Equal(t, respReg.GetUserId(), int64(claims["uid"].(float64)))
-	assert.Equal(t, phoneNumber, claims["phoneNumber"].(string))
+	assert.Equal(t, phone, claims["phone"].(string))
 	assert.Equal(t, appID, int(claims["app_id"].(float64)))
 
 	const deltaSeconds = 1
@@ -65,18 +65,18 @@ func TestRegisterLogin_Login_HappyPath(t *testing.T) {
 func TestRegisterLogin_DuplicatedRegistration(t *testing.T) {
 	ctx, st := suite.New(t)
 
-	phoneNumber := gofakeit.Phone()
+	phone := gofakeit.Phone()
 	pass := randomFakePassword()
 
 	respReg, err := st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-		PhoneNumber: phoneNumber,
+		PhoneNumber: phone,
 		Password:    pass,
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, respReg.GetUserId())
 
 	respReg, err = st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-		PhoneNumber: phoneNumber,
+		PhoneNumber: phone,
 		Password:    pass,
 	})
 	require.Error(t, err)
@@ -89,34 +89,34 @@ func TestRegister_FailCases(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		phoneNumber string
+		phone       string
 		password    string
 		expectedErr string
 	}{
 		{
 			name:        "Register with Empty Password",
-			phoneNumber: gofakeit.Phone(),
+			phone:       gofakeit.Phone(),
 			password:    "",
 			expectedErr: "password is required",
 		},
 		{
-			name:        "Register with Empty PhoneNumber",
-			phoneNumber: "",
+			name:        "Register with Empty Phone",
+			phone:       "",
 			password:    randomFakePassword(),
-			expectedErr: "phoneNumber is required",
+			expectedErr: "phone is required",
 		},
 		{
 			name:        "Register with Both Empty",
-			phoneNumber: "",
+			phone:       "",
 			password:    "",
-			expectedErr: "phoneNumber is required",
+			expectedErr: "phone is required",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-				PhoneNumber: tt.phoneNumber,
+				PhoneNumber: tt.phone,
 				Password:    tt.password,
 			})
 			require.Error(t, err)
@@ -131,42 +131,42 @@ func TestLogin_FailCases(t *testing.T) {
 
 	tests := []struct {
 		name        string
-		phoneNumber string
+		phone       string
 		password    string
 		appID       int32
 		expectedErr string
 	}{
 		{
 			name:        "Login with Empty Password",
-			phoneNumber: gofakeit.Phone(),
+			phone:       gofakeit.Phone(),
 			password:    "",
 			appID:       appID,
 			expectedErr: "password is required",
 		},
 		{
-			name:        "Login with Empty PhoneNumber",
-			phoneNumber: "",
+			name:        "Login with Empty Phone",
+			phone:       "",
 			password:    randomFakePassword(),
 			appID:       appID,
-			expectedErr: "phoneNumber is required",
+			expectedErr: "phone is required",
 		},
 		{
-			name:        "Login with Both Empty PhoneNumber and Password",
-			phoneNumber: "",
+			name:        "Login with Both Empty Phone and Password",
+			phone:       "",
 			password:    "",
 			appID:       appID,
-			expectedErr: "phoneNumber is required",
+			expectedErr: "phone is required",
 		},
 		{
 			name:        "Login with Non-Matching Password",
-			phoneNumber: gofakeit.Phone(),
+			phone:       gofakeit.Phone(),
 			password:    randomFakePassword(),
 			appID:       appID,
-			expectedErr: "invalid phoneNumber or password",
+			expectedErr: "invalid phone or password",
 		},
 		{
 			name:        "Login without AppID",
-			phoneNumber: gofakeit.Phone(),
+			phone:       gofakeit.Phone(),
 			password:    randomFakePassword(),
 			appID:       emptyAppID,
 			expectedErr: "app_id is required",
@@ -182,7 +182,7 @@ func TestLogin_FailCases(t *testing.T) {
 			require.NoError(t, err)
 
 			_, err = st.AuthClient.Login(ctx, &ssov1.LoginRequest{
-				PhoneNumber: tt.phoneNumber,
+				PhoneNumber: tt.phone,
 				Password:    tt.password,
 				AppId:       tt.appID,
 			})

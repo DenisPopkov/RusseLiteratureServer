@@ -4,7 +4,7 @@ import (
 	"log/slog"
 	grpcapp "sso/internal/app/grpc"
 	"sso/internal/services/auth"
-	"sso/internal/services/storage/sqlite"
+	"sso/internal/storage/sqlite"
 	"time"
 )
 

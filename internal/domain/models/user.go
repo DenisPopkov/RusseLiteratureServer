@@ -1,7 +1,7 @@
 package models
 
 type User struct {
-	ID          int64
-	PhoneNumber string
-	PassHash    []byte
+	ID       int64
+	Phone    string
+	PassHash []byte
 }

@@ -8,19 +8,19 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"sso/internal/services/auth"
-	"sso/internal/services/storage"
+	"sso/internal/storage"
 )
 
 type Auth interface {
 	Login(
 		ctx context.Context,
-		phoneNumber string,
+		phone string,
 		password string,
 		appID int,
 	) (token string, err error)
 	RegisterNewUser(
 		ctx context.Context,
-		phoneNumber string,
+		phone string,
 		password string,
 	) (userID int64, err error)
 	IsAdmin(ctx context.Context, userID int64) (bool, error)
@@ -40,7 +40,7 @@ func (s *serverAPI) Login(
 	in *ssov1.LoginRequest,
 ) (*ssov1.LoginResponse, error) {
 	if in.PhoneNumber == "" {
-		return nil, status.Error(codes.InvalidArgument, "phoneNumber is required")
+		return nil, status.Error(codes.InvalidArgument, "phone is required")
 	}
 
 	if in.Password == "" {
@@ -54,7 +54,7 @@ func (s *serverAPI) Login(
 	token, err := s.auth.Login(ctx, in.GetPhoneNumber(), in.GetPassword(), int(in.GetAppId()))
 	if err != nil {
 		if errors.Is(err, auth.ErrInvalidCredentials) {
-			return nil, status.Error(codes.InvalidArgument, "invalid phoneNumber or password")
+			return nil, status.Error(codes.InvalidArgument, "invalid phone or password")
 		}
 
 		return nil, status.Error(codes.Internal, "failed to login")
@@ -68,7 +68,7 @@ func (s *serverAPI) Register(
 	in *ssov1.RegisterRequest,
 ) (*ssov1.RegisterResponse, error) {
 	if in.PhoneNumber == "" {
-		return nil, status.Error(codes.InvalidArgument, "phoneNumber is required")
+		return nil, status.Error(codes.InvalidArgument, "phone is required")
 	}
 
 	if in.Password == "" {
