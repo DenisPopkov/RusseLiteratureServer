@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: register new user method">
-      <change afterPath="$PROJECT_DIR$/internal/lib/jwt/jwt.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/services/storage/storage.go" afterDir="false" />
+    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="refactor: provide error for register and is admin">
+      <change afterPath="$PROJECT_DIR$/cmd/migrator/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/auth/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -142,7 +141,10 @@
     <MESSAGE value="add: login method logic" />
     <MESSAGE value="add: register and admin handler" />
     <MESSAGE value="add: register new user method" />
-    <option name="LAST_COMMIT_MESSAGE" value="add: register new user method" />
+    <MESSAGE value="add: login user method" />
+    <MESSAGE value="add: is admin method" />
+    <MESSAGE value="refactor: provide error for register and is admin" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: provide error for register and is admin" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
