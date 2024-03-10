@@ -6,22 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="refactor: tests">
       <change beforePath="$PROJECT_DIR$/.idea/dataSources/af1bbccc-4453-413e-a177-be0795937623.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/af1bbccc-4453-413e-a177-be0795937623.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/local_tests.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/local_tests.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/prod.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/prod.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deployment/grpc-auth.service" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/grpc/auth/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpc/auth/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/lib/logger/handlers/slogdiscard/slogdiscard.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/lib/logger/handlers/slogdiscard/slogdiscard.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/auth/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/storage/sqlite/sqlite.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/storage/sqlite/sqlite.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/2_add_is_admin_column_to_users_tbl.down.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/2_add_is_admin_column_to_users_tbl.up.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/github.com/!burnt!sushi/toml/@v/list" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/mod/cache/download/github.com/!burnt!sushi/toml/@v/list" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/list" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/list" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,6 +27,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
   <component name="GoLibraries">
     <option name="urls">
@@ -64,36 +49,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Go Build.go build sso/cmd/migrator.executor": "Run",
-    "Go Build.go build sso/cmd/sso.executor": "Run",
-    "Go Test.TestLogin_FailCases in sso/tests.executor": "Run",
-    "Go Test.TestRegisterLogin_DuplicatedRegistration in sso/tests.executor": "Run",
-    "Go Test.TestRegisterLogin_Login_HappyPath in sso/tests.executor": "Run",
-    "Go Test.TestRegister_FailCases in sso/tests.executor": "Run",
-    "Go Test.TestRegister_FailCases/Register_with_Both_Empty in sso/tests.executor": "Run",
-    "Go Test.TestRegister_FailCases/Register_with_Empty_Password in sso/tests.executor": "Run",
-    "Go Test.TestRegister_FailCases/Register_with_Empty_Pho in sso/tests.executor": "Run",
-    "Go Test.TestRegister_FailCases/Register_with_Empty_Phone in sso/tests.executor": "Run",
-    "Go Test.auth_register_login_test.go.executor": "Run",
-    "Go Test.go test sso/tests.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "feature/auth",
-    "go.import.settings.migrated": "true",
-    "last_opened_file_path": "/Users/denispopkov/GolandProjects/sso",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "go.vgo"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Go Build.go build sso/cmd/migrator.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build sso/cmd/sso.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestLogin_FailCases in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegisterLogin_DuplicatedRegistration in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegisterLogin_Login_HappyPath in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegister_FailCases in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegister_FailCases/Register_with_Both_Empty in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegister_FailCases/Register_with_Empty_Password in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegister_FailCases/Register_with_Empty_Pho in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegister_FailCases/Register_with_Empty_Phone in sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.auth_register_login_test.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.go test sso/tests.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/auth&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/denispopkov/GolandProjects/sso&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;go.vgo&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
