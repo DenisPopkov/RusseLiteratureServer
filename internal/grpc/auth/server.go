@@ -1,11 +1,14 @@
-package auth
+package authgrpc
 
 import (
 	"context"
+	"errors"
 	ssov1 "github.com/DenisPopkov/protos/gen/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"sso/internal/services/auth"
+	"sso/internal/services/storage"
 )
 
 type Auth interface {
@@ -28,46 +31,78 @@ type serverAPI struct {
 	auth Auth
 }
 
-func Register(gRPC *grpc.Server, auth Auth) {
-	ssov1.RegisterAuthServer(gRPC, &serverAPI{auth: auth})
+func Register(gRPCServer *grpc.Server, auth Auth) {
+	ssov1.RegisterAuthServer(gRPCServer, &serverAPI{auth: auth})
 }
 
-func (s *serverAPI) Login(ctx context.Context,
-	req *ssov1.LoginRequest,
+func (s *serverAPI) Login(
+	ctx context.Context,
+	in *ssov1.LoginRequest,
 ) (*ssov1.LoginResponse, error) {
-
-	token, err := s.auth.Login(ctx, req.GetPhoneNumber(), req.GetPassword(), int(req.GetAppId()))
-	if err != nil {
-		return nil, status.Error(codes.Internal, "internal error")
+	if in.PhoneNumber == "" {
+		return nil, status.Error(codes.InvalidArgument, "phoneNumber is required")
 	}
 
-	return &ssov1.LoginResponse{
-		Token: token,
-	}, nil
+	if in.Password == "" {
+		return nil, status.Error(codes.InvalidArgument, "password is required")
+	}
+
+	if in.GetAppId() == 0 {
+		return nil, status.Error(codes.InvalidArgument, "app_id is required")
+	}
+
+	token, err := s.auth.Login(ctx, in.GetPhoneNumber(), in.GetPassword(), int(in.GetAppId()))
+	if err != nil {
+		if errors.Is(err, auth.ErrInvalidCredentials) {
+			return nil, status.Error(codes.InvalidArgument, "invalid phoneNumber or password")
+		}
+
+		return nil, status.Error(codes.Internal, "failed to login")
+	}
+
+	return &ssov1.LoginResponse{Token: token}, nil
 }
 
-func (s *serverAPI) Register(ctx context.Context,
-	req *ssov1.RegisterRequest,
+func (s *serverAPI) Register(
+	ctx context.Context,
+	in *ssov1.RegisterRequest,
 ) (*ssov1.RegisterResponse, error) {
-	userID, err := s.auth.RegisterNewUser(ctx, req.GetPhoneNumber(), req.GetPassword())
-	if err != nil {
-		return nil, status.Error(codes.Internal, "internal error")
+	if in.PhoneNumber == "" {
+		return nil, status.Error(codes.InvalidArgument, "phoneNumber is required")
 	}
 
-	return &ssov1.RegisterResponse{
-		UserId: userID,
-	}, nil
+	if in.Password == "" {
+		return nil, status.Error(codes.InvalidArgument, "password is required")
+	}
+
+	uid, err := s.auth.RegisterNewUser(ctx, in.GetPhoneNumber(), in.GetPassword())
+	if err != nil {
+		if errors.Is(err, storage.ErrUserExists) {
+			return nil, status.Error(codes.AlreadyExists, "user already exists")
+		}
+
+		return nil, status.Error(codes.Internal, "failed to register user")
+	}
+
+	return &ssov1.RegisterResponse{UserId: uid}, nil
 }
 
-func (s *serverAPI) IsAdmin(ctx context.Context,
-	req *ssov1.IsAdminRequest,
+func (s *serverAPI) IsAdmin(
+	ctx context.Context,
+	in *ssov1.IsAdminRequest,
 ) (*ssov1.IsAdminResponse, error) {
-	isAdmin, err := s.auth.IsAdmin(ctx, req.GetUserId())
-	if err != nil {
-		return nil, status.Error(codes.Internal, "internal error")
+	if in.UserId == 0 {
+		return nil, status.Error(codes.InvalidArgument, "user_id is required")
 	}
 
-	return &ssov1.IsAdminResponse{
-		IsAdmin: isAdmin,
-	}, nil
+	isAdmin, err := s.auth.IsAdmin(ctx, in.GetUserId())
+	if err != nil {
+		if errors.Is(err, storage.ErrUserNotFound) {
+			return nil, status.Error(codes.NotFound, "user not found")
+		}
+
+		return nil, status.Error(codes.Internal, "failed to check admin status")
+	}
+
+	return &ssov1.IsAdminResponse{IsAdmin: isAdmin}, nil
 }

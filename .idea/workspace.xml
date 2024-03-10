@@ -4,18 +4,62 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: migration rules">
-      <change afterPath="$PROJECT_DIR$/Taskfile.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/services/storage/sqlite/sqlite.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: sqlite logic">
+      <change afterPath="$PROJECT_DIR$/config/local_tests.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/prod.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/auth_register_login_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/migrations/1_init_apps.up.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/suite/suite.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/af1bbccc-4453-413e-a177-be0795937623.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/af1bbccc-4453-413e-a177-be0795937623.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Taskfile.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/Taskfile.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/sso/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/sso/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/local.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/config/config.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/grpc/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/grpc/app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/auth/auth.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/1_init.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/1_init.up.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/grpc/auth/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/grpc/auth/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/list" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/v0.14.0.info" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/v0.14.0.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/v0.14.0.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/v0.14.0.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/golang.org/x/sys/@v/v0.14.0.ziphash" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/gopkg.in/check.v1/@v/list" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/mod/cache/download/gopkg.in/check.v1/@v/list" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/gopkg.in/check.v1/@v/v0.0.0-20161208181325-20d25e280405.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/gopkg.in/check.v1/@v/v0.0.0-20161208181325-20d25e280405.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/gopkg.in/check.v1/@v/v0.0.0-20161208181325-20d25e280405.ziphash" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/gopkg.in/check.v1/@v/v1.0.0-20201130134442-10cb98267c6c.info" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/gopkg.in/check.v1/@v/v1.0.0-20201130134442-10cb98267c6c.mod" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/sumdb/sum.golang.org/lookup/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/sumdb/sum.golang.org/lookup/gopkg.in/check.v1@v1.0.0-20201130134442-10cb98267c6c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/sumdb/sum.golang.org/tile/8/0/x007/650" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/sumdb/sum.golang.org/tile/8/0/x091/815" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/sumdb/sum.golang.org/tile/8/0/x091/818.p/16" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/sumdb/sum.golang.org/tile/8/1/029" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/cache/download/sumdb/sum.golang.org/tile/8/1/358.p/170" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/.travis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/TODO" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/benchmark.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/benchmark_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/bootstrap_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/check.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/check_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/checkers.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/checkers_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/export_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/fixture_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/foundation_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/helpers.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/helpers_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/printer.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/printer_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/reporter.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/reporter_test.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/run.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/mod/gopkg.in/check.v1@v0.0.0-20161208181325-20d25e280405/run_test.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +106,12 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "DefaultGoTemplateProperty": "Go File",
+    "Go Build.go build sso/cmd/migrator.executor": "Run",
     "Go Build.go build sso/cmd/sso.executor": "Run",
+    "Go Test.TestRegisterLogin_Login_HappyPath in sso/tests.executor": "Run",
+    "Go Test.TestRegister_FailCases in sso/tests.executor": "Run",
+    "Go Test.auth_register_login_test.go.executor": "Run",
+    "Go Test.go test sso/tests.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
@@ -81,31 +130,70 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/config" />
       <recent name="$PROJECT_DIR$/internal/lib" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Go Test.auth_register_login_test.go">
+    <configuration name="1_init_apps.up.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/tests/migrations/1_init_apps.up.sql" />
+      <script-mode>FILE</script-mode>
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="sso" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind />
+      <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <method v="2" />
     </configuration>
-    <configuration name="go build sso/cmd/sso" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="go build sso/cmd/migrator" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="sso" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="sso/cmd/sso" />
+      <package value="sso/cmd/migrator" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/cmd/sso/main.go" />
+      <filePath value="$PROJECT_DIR$/cmd/migrator/main.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestRegister_FailCases in sso/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="sso" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="sso/tests" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestRegister_FailCases\E$" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
       <module name="sso" />
       <working_directory value="$PROJECT_DIR$" />
-      <kind />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration name="auth_register_login_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="sso" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/tests/auth_register_login_test.go" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test sso/tests" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="sso" />
+      <working_directory value="$PROJECT_DIR$/tests" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="sso/tests" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
@@ -113,7 +201,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build sso/cmd/sso" />
+        <item itemvalue="Go Test.auth_register_login_test.go" />
+        <item itemvalue="Go Test.TestRegister_FailCases in sso/tests" />
+        <item itemvalue="Database Script.1_init_apps.up.sql" />
+        <item itemvalue="Go Build.go build sso/cmd/migrator" />
+        <item itemvalue="Go Test.go test sso/tests" />
       </list>
     </recent_temporary>
   </component>
@@ -157,7 +249,8 @@
     <MESSAGE value="refactor: provide error for register and is admin" />
     <MESSAGE value="add: migration util" />
     <MESSAGE value="add: migration rules" />
-    <option name="LAST_COMMIT_MESSAGE" value="add: migration rules" />
+    <MESSAGE value="add: sqlite logic" />
+    <option name="LAST_COMMIT_MESSAGE" value="add: sqlite logic" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
