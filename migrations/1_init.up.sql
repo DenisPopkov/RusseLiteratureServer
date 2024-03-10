@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS users
         NOT
             NULL
 );
-CREATE INDEX IF NOT EXISTS idx_email ON users (phoneNumber);
+CREATE INDEX IF NOT EXISTS idx_phone_number ON users (phoneNumber);
 
 CREATE TABLE IF NOT EXISTS apps
 (

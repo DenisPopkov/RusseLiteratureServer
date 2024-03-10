@@ -50,14 +50,14 @@ func New(
 	userSaver UserSaver,
 	userProvider UserProvider,
 	appProvider AppProvider,
-	tokenTTl time.Duration,
+	tokenTTL time.Duration,
 ) *Auth {
 	return &Auth{
 		userSaver:    userSaver,
 		userProvider: userProvider,
 		log:          log,
 		appProvider:  appProvider,
-		tokenTTL:     tokenTTl,
+		tokenTTL:     tokenTTL,
 	}
 }
 

@@ -4,11 +4,18 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="refactor: provide error for register and is admin">
-      <change afterPath="$PROJECT_DIR$/cmd/migrator/main.go" afterDir="false" />
+    <list default="true" id="4da29625-0ac0-42b6-8466-ebec231f1e9f" name="Changes" comment="add: migration rules">
+      <change afterPath="$PROJECT_DIR$/Taskfile.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/services/storage/sqlite/sqlite.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/sso/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/sso/main.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/grpc/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/grpc/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/auth/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/auth/auth.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/1_init.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/1_init.up.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/sumdb/sum.golang.org/latest" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,6 +47,9 @@
       </list>
     </option>
   </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
 }</component>
@@ -61,15 +71,16 @@
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "git-widget-placeholder": "feature/auth",
     "go.import.settings.migrated": "true",
-    "last_opened_file_path": "/Users/denispopkov/GolandProjects/sso/internal/lib",
+    "last_opened_file_path": "/Users/denispopkov/GolandProjects/sso",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "goland.project.structure"
+    "settings.editor.selected.configurable": "go.vgo"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/internal/lib" />
     </key>
   </component>
@@ -144,7 +155,9 @@
     <MESSAGE value="add: login user method" />
     <MESSAGE value="add: is admin method" />
     <MESSAGE value="refactor: provide error for register and is admin" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: provide error for register and is admin" />
+    <MESSAGE value="add: migration util" />
+    <MESSAGE value="add: migration rules" />
+    <option name="LAST_COMMIT_MESSAGE" value="add: migration rules" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>

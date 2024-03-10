@@ -6,7 +6,7 @@ require github.com/ilyakaznacheev/cleanenv v1.5.0
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/DenisPopkov/protos v0.0.4 // indirect
+	github.com/DenisPopkov/protos v0.0.5 // indirect
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang-migrate/migrate/v4 v4.17.0 // indirect
@@ -16,6 +16,7 @@ require (
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
