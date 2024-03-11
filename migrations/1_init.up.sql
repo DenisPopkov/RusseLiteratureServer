@@ -8,7 +8,6 @@ CREATE INDEX IF NOT EXISTS idx_phone ON users (phone);
 
 CREATE TABLE IF NOT EXISTS apps
 (
-    id     INTEGER PRIMARY KEY,
     name   TEXT NOT NULL UNIQUE,
     secret TEXT NOT NULL UNIQUE
 );

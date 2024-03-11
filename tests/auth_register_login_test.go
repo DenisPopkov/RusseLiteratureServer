@@ -12,10 +12,7 @@ import (
 )
 
 const (
-	emptyAppID = 0
-	appID      = 1
-	appSecret  = "test-secret"
-
+	appSecret      = "test-secret"
 	passDefaultLen = 8
 )
 
@@ -26,16 +23,15 @@ func TestRegisterLogin_Login_HappyPath(t *testing.T) {
 	pass := randomFakePassword()
 
 	respReg, err := st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-		PhoneNumber: phone,
-		Password:    pass,
+		Phone:    phone,
+		Password: pass,
 	})
 	require.NoError(t, err)
 	assert.NotEmpty(t, respReg.GetUserId())
 
 	respLogin, err := st.AuthClient.Login(ctx, &ssov1.LoginRequest{
-		PhoneNumber: phone,
-		Password:    pass,
-		AppId:       appID,
+		Phone:    phone,
+		Password: pass,
 	})
 	require.NoError(t, err)
 
@@ -54,7 +50,6 @@ func TestRegisterLogin_Login_HappyPath(t *testing.T) {
 
 	assert.Equal(t, respReg.GetUserId(), int64(claims["uid"].(float64)))
 	assert.Equal(t, phone, claims["phone"].(string))
-	assert.Equal(t, appID, int(claims["app_id"].(float64)))
 
 	const deltaSeconds = 1
 
@@ -69,15 +64,15 @@ func TestRegisterLogin_DuplicatedRegistration(t *testing.T) {
 	pass := randomFakePassword()
 
 	respReg, err := st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-		PhoneNumber: phone,
-		Password:    pass,
+		Phone:    phone,
+		Password: pass,
 	})
 	require.NoError(t, err)
 	require.NotEmpty(t, respReg.GetUserId())
 
 	respReg, err = st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-		PhoneNumber: phone,
-		Password:    pass,
+		Phone:    phone,
+		Password: pass,
 	})
 	require.Error(t, err)
 	assert.Empty(t, respReg.GetUserId())
@@ -116,8 +111,8 @@ func TestRegister_FailCases(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-				PhoneNumber: tt.phone,
-				Password:    tt.password,
+				Phone:    tt.phone,
+				Password: tt.password,
 			})
 			require.Error(t, err)
 			require.Contains(t, err.Error(), tt.expectedErr)
@@ -133,58 +128,45 @@ func TestLogin_FailCases(t *testing.T) {
 		name        string
 		phone       string
 		password    string
-		appID       int32
 		expectedErr string
 	}{
 		{
 			name:        "Login with Empty Password",
 			phone:       gofakeit.Phone(),
 			password:    "",
-			appID:       appID,
 			expectedErr: "password is required",
 		},
 		{
 			name:        "Login with Empty Phone",
 			phone:       "",
 			password:    randomFakePassword(),
-			appID:       appID,
 			expectedErr: "phone is required",
 		},
 		{
 			name:        "Login with Both Empty Phone and Password",
 			phone:       "",
 			password:    "",
-			appID:       appID,
 			expectedErr: "phone is required",
 		},
 		{
 			name:        "Login with Non-Matching Password",
 			phone:       gofakeit.Phone(),
 			password:    randomFakePassword(),
-			appID:       appID,
 			expectedErr: "invalid phone or password",
-		},
-		{
-			name:        "Login without AppID",
-			phone:       gofakeit.Phone(),
-			password:    randomFakePassword(),
-			appID:       emptyAppID,
-			expectedErr: "app_id is required",
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := st.AuthClient.Register(ctx, &ssov1.RegisterRequest{
-				PhoneNumber: gofakeit.Phone(),
-				Password:    randomFakePassword(),
+				Phone:    gofakeit.Phone(),
+				Password: randomFakePassword(),
 			})
 			require.NoError(t, err)
 
 			_, err = st.AuthClient.Login(ctx, &ssov1.LoginRequest{
-				PhoneNumber: tt.phone,
-				Password:    tt.password,
-				AppId:       tt.appID,
+				Phone:    tt.phone,
+				Password: tt.password,
 			})
 			require.Error(t, err)
 			require.Contains(t, err.Error(), tt.expectedErr)

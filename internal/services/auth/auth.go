@@ -38,7 +38,7 @@ type UserProvider interface {
 }
 
 type AppProvider interface {
-	App(ctx context.Context, appID int) (models.App, error)
+	App(ctx context.Context) (models.App, error)
 }
 
 func New(
@@ -64,7 +64,6 @@ func (a *Auth) Login(
 	ctx context.Context,
 	phone string,
 	password string,
-	appID int,
 ) (string, error) {
 	const op = "Auth.Login"
 
@@ -94,7 +93,7 @@ func (a *Auth) Login(
 		return "", fmt.Errorf("%s: %w", op, ErrInvalidCredentials)
 	}
 
-	app, err := a.appProvider.App(ctx, appID)
+	app, err := a.appProvider.App(ctx)
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}

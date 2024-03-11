@@ -16,7 +16,6 @@ type Auth interface {
 		ctx context.Context,
 		phone string,
 		password string,
-		appID int,
 	) (token string, err error)
 	RegisterNewUser(
 		ctx context.Context,
@@ -38,7 +37,7 @@ func (s *serverAPI) Login(
 	ctx context.Context,
 	in *ssov1.LoginRequest,
 ) (*ssov1.LoginResponse, error) {
-	if in.PhoneNumber == "" {
+	if in.Phone == "" {
 		return nil, status.Error(codes.InvalidArgument, "phone is required")
 	}
 
@@ -46,11 +45,7 @@ func (s *serverAPI) Login(
 		return nil, status.Error(codes.InvalidArgument, "password is required")
 	}
 
-	if in.GetAppId() == 0 {
-		return nil, status.Error(codes.InvalidArgument, "app_id is required")
-	}
-
-	token, err := s.auth.Login(ctx, in.GetPhoneNumber(), in.GetPassword(), int(in.GetAppId()))
+	token, err := s.auth.Login(ctx, in.GetPhone(), in.GetPassword())
 	if err != nil {
 		if errors.Is(err, auth.ErrInvalidCredentials) {
 			return nil, status.Error(codes.InvalidArgument, "invalid phone or password")
@@ -66,7 +61,7 @@ func (s *serverAPI) Register(
 	ctx context.Context,
 	in *ssov1.RegisterRequest,
 ) (*ssov1.RegisterResponse, error) {
-	if in.PhoneNumber == "" {
+	if in.Phone == "" {
 		return nil, status.Error(codes.InvalidArgument, "phone is required")
 	}
 
@@ -74,7 +69,7 @@ func (s *serverAPI) Register(
 		return nil, status.Error(codes.InvalidArgument, "password is required")
 	}
 
-	uid, err := s.auth.RegisterNewUser(ctx, in.GetPhoneNumber(), in.GetPassword())
+	uid, err := s.auth.RegisterNewUser(ctx, in.GetPhone(), in.GetPassword())
 	if err != nil {
 		if errors.Is(err, storage.ErrUserExists) {
 			return nil, status.Error(codes.AlreadyExists, "user already exists")
