@@ -21,10 +21,15 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 
-	application := app.New(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
+	grpcApplication := app.NewGrpc(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
+	restApplication := app.NewRest(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
 
 	go func() {
-		application.GRPCServer.MustRun()
+		grpcApplication.GRPCServer.MustRun()
+	}()
+
+	go func() {
+		restApplication.RestServer.MustRun()
 	}()
 
 	// Graceful shutdown
@@ -34,7 +39,7 @@ func main() {
 
 	<-stop
 
-	application.GRPCServer.Stop()
+	grpcApplication.GRPCServer.Stop()
 	log.Info("Gracefully stopped")
 }
 

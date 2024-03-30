@@ -80,6 +80,37 @@ func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	return user, nil
 }
 
+// Author get authors from db.
+func (s *Storage) Author(ctx context.Context) ([]models.Author, error) {
+	const op = "storage.sqlite.GetAuthors"
+
+	stmt, err := s.db.Prepare("SELECT * FROM authors")
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	rows, err := stmt.QueryContext(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var authors []models.Author
+	for rows.Next() {
+		var author models.Author
+		err := rows.Scan(&author.ID, &author.Name, &author.Text, &author.IsFave, &author.Image)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		authors = append(authors, author)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return authors, nil
+}
+
 func (s *Storage) App(ctx context.Context) (models.App, error) {
 	const op = "storage.sqlite.App"
 
