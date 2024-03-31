@@ -50,11 +50,11 @@ func NewRest(
 	}
 
 	coreService := core.New(log, storage, tokenTTL)
-	restApp := restapp.New(log, coreService, 4040)
+	restApp := restapp.New(log, coreService, port)
 
 	return &App{
 		log:        log,
 		RestServer: restApp,
-		port:       4041,
+		port:       port,
 	}
 }

@@ -3,3 +3,6 @@ storage_path: "./storage/sso.db"
 grpc:
   port: 4040
   timeout: 10h
+rest:
+  port: 4041
+  timeout: 10h

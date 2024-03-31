@@ -3,4 +3,7 @@ storage_path: "/root/apps/grpc-auth/sso.db"
 grpc:
   port: 4040
   timeout: 5s
+rest:
+  port: 4041
+  timeout: 5s
 migrations_path: "./migrations"

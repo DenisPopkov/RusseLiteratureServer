@@ -22,7 +22,7 @@ func main() {
 	log := setupLogger(cfg.Env)
 
 	grpcApplication := app.NewGrpc(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
-	restApplication := app.NewRest(log, cfg.GRPC.Port, cfg.StoragePath, cfg.TokenTTL)
+	restApplication := app.NewRest(log, cfg.REST.Port, cfg.StoragePath, cfg.TokenTTL)
 
 	go func() {
 		grpcApplication.GRPCServer.MustRun()

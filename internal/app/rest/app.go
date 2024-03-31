@@ -43,7 +43,7 @@ func (a *App) Run() error {
 	router.HandleFunc("/author", a.coreService.GetAuthorHandler).Methods("GET")
 
 	a.httpServer = &http.Server{
-		Addr:    fmt.Sprintf(":%d", 4041),
+		Addr:    fmt.Sprintf(":%d", a.port),
 		Handler: router,
 	}
 
