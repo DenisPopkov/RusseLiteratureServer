@@ -68,7 +68,7 @@ func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	row := stmt.QueryRowContext(ctx, phone)
 
 	var user models.User
-	err = row.Scan(&user.ID, &user.Phone, &user.PassHash)
+	err = row.Scan(&user.ID, &user.Phone, &user.PassHash, &user.Feed)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.User{}, fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)
@@ -98,7 +98,7 @@ func (s *Storage) Author(ctx context.Context) ([]models.Author, error) {
 	var authors []models.Author
 	for rows.Next() {
 		var author models.Author
-		err := rows.Scan(&author.ID, &author.Name, &author.Text, &author.IsFave, &author.Image)
+		err := rows.Scan(&author.ID, &author.Name, &author.Text, &author.Image, &author.Clip, &author.IsFave)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}

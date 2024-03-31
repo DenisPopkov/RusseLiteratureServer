@@ -1,6 +1,6 @@
 package models
 
-type Author struct {
+type Poet struct {
 	ID     int64
 	Name   string
 	Text   string
