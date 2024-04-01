@@ -150,45 +150,51 @@ func (s *Storage) Author(ctx context.Context) ([]models.Author, error) {
 	return authors, nil
 }
 
-// Feed get feed from db.
-func (s *Storage) Feed(ctx context.Context, userId int64) (models.Feed, error) {
-	const op = "storage.sqlite.GetFeed"
+// Authors retrieves authors from the database for a given user ID.
+func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, error) {
+	const op = "storage.sqlite.GetAuthors"
 
 	stmt, err := s.db.Prepare(`
-		SELECT a.id, a.name, a.image, a.clip
-		FROM authors AS a 
-		WHERE a.id IN (
+		SELECT id, name, image, clip
+		FROM authors 
+		WHERE id IN (
 			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
 			FROM feed 
 			CROSS JOIN json_each(feed.authors) AS json_each 
 			WHERE feed.id = ?)
 	`)
 	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	authorsRow, err := stmt.QueryContext(ctx, userId)
+	rows, err := stmt.QueryContext(ctx, userId)
 	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	defer authorsRow.Close()
+	defer rows.Close()
 
-	var feed models.Feed
-	for authorsRow.Next() {
+	var authors []models.Author
+	for rows.Next() {
 		var author models.Author
-		err := authorsRow.Scan(&author.ID, &author.Name, &author.Image, &author.Clip)
+		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip)
 		if err != nil {
-			return models.Feed{}, fmt.Errorf("%s: %w", op, err)
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
-		feed.Authors = append(feed.Authors, author)
+		authors = append(authors, author)
 	}
 
-	if err := authorsRow.Err(); err != nil {
-		return feed, fmt.Errorf("%s: %w", op, err)
+	if err := rows.Err(); err != nil {
+		return authors, fmt.Errorf("%s: %w", op, err)
 	}
 
-	// Fetch articles
-	articleStmt, err := s.db.Prepare(`
+	return authors, nil
+}
+
+// Articles retrieves articles from the database for a given user ID.
+func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article, error) {
+	const op = "storage.sqlite.GetArticles"
+
+	stmt, err := s.db.Prepare(`
 		SELECT id, name, image, clip
 		FROM articles 
 		WHERE id IN (
@@ -199,30 +205,37 @@ func (s *Storage) Feed(ctx context.Context, userId int64) (models.Feed, error) {
 		)
 	`)
 	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	articleRows, err := articleStmt.QueryContext(ctx, userId)
+	rows, err := stmt.QueryContext(ctx, userId)
 	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
-	defer articleRows.Close()
+	defer rows.Close()
 
-	for articleRows.Next() {
+	var articles []models.Article
+	for rows.Next() {
 		var article models.Article
-		err := articleRows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip)
+		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip)
 		if err != nil {
-			return models.Feed{}, fmt.Errorf("%s: %w", op, err)
+			return nil, fmt.Errorf("%s: %w", op, err)
 		}
-		feed.Articles = append(feed.Articles, article)
+		articles = append(articles, article)
 	}
 
-	if err := articleRows.Err(); err != nil {
-		return feed, fmt.Errorf("%s: %w", op, err)
+	if err := rows.Err(); err != nil {
+		return articles, fmt.Errorf("%s: %w", op, err)
 	}
 
-	// Fetch poets
-	poetStmt, err := s.db.Prepare(`
+	return articles, nil
+}
+
+// Poets retrieves poets from the database for a given user ID.
+func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error) {
+	const op = "storage.sqlite.GetPoets"
+
+	stmt, err := s.db.Prepare(`
 		SELECT id, name, image, clip
 		FROM poets 
 		WHERE id IN (
@@ -233,29 +246,60 @@ func (s *Storage) Feed(ctx context.Context, userId int64) (models.Feed, error) {
 		)
 	`)
 	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
-	poetRows, err := poetStmt.QueryContext(ctx, userId)
+	rows, err := stmt.QueryContext(ctx, userId)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var poets []models.Poet
+	for rows.Next() {
+		var poet models.Poet
+		err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip)
+		if err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		poets = append(poets, poet)
+	}
+
+	if err := rows.Err(); err != nil {
+		return poets, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return poets, nil
+}
+
+// Feed retrieves the feed containing authors, articles, and poets for a given user ID.
+func (s *Storage) Feed(ctx context.Context, userId int64) (models.Feed, error) {
+	const op = "storage.sqlite.GetFeed"
+
+	// Get authors
+	authors, err := s.Authors(ctx, userId)
 	if err != nil {
 		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
 	}
-	defer poetRows.Close()
 
-	for poetRows.Next() {
-		var poet models.Poet
-		err := poetRows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip)
-		if err != nil {
-			return models.Feed{}, fmt.Errorf("%s: %w", op, err)
-		}
-		feed.Poets = append(feed.Poets, poet)
+	// Get articles
+	articles, err := s.Articles(ctx, userId)
+	if err != nil {
+		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	if err := poetRows.Err(); err != nil {
-		return feed, fmt.Errorf("%s: %w", op, err)
+	// Get poets
+	poets, err := s.Poets(ctx, userId)
+	if err != nil {
+		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	feed.ID = userId
+	feed := models.Feed{
+		ID:       userId,
+		Authors:  authors,
+		Articles: articles,
+		Poets:    poets,
+	}
 
 	return feed, nil
 }
