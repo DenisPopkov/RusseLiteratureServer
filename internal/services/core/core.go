@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+type UserProvider interface {
+	DeleteUser(ctx context.Context, userId int64) error
+}
+
 type PoetProvider interface {
 	Poets(ctx context.Context, userId int64) ([]models.Poet, error)
 }
@@ -29,6 +33,7 @@ type FeedProvider interface {
 
 type Core struct {
 	log             *slog.Logger
+	userProvider    UserProvider
 	poetProvider    PoetProvider
 	articleProvider ArticleProvider
 	authorProvider  AuthorProvider
@@ -38,6 +43,7 @@ type Core struct {
 
 func New(
 	log *slog.Logger,
+	userProvider UserProvider,
 	poetProvider PoetProvider,
 	articleProvider ArticleProvider,
 	authorProvider AuthorProvider,
@@ -46,6 +52,7 @@ func New(
 ) *Core {
 	return &Core{
 		log:             log,
+		userProvider:    userProvider,
 		poetProvider:    poetProvider,
 		articleProvider: articleProvider,
 		authorProvider:  authorProvider,
@@ -145,4 +152,23 @@ func (c *Core) GetPoetsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (c *Core) DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
+	const op = "core.DeleteUserHandler"
+
+	userIDStr := r.URL.Query().Get("userId")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	err = c.userProvider.DeleteUser(r.Context(), userID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

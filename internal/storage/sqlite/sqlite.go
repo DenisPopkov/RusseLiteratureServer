@@ -304,6 +304,23 @@ func (s *Storage) Feed(ctx context.Context, userId int64) (models.Feed, error) {
 	return feed, nil
 }
 
+// DeleteUser deletes a user by their ID.
+func (s *Storage) DeleteUser(ctx context.Context, userID int64) error {
+	const op = "storage.sqlite.DeleteUser"
+
+	stmt, err := s.db.Prepare("DELETE FROM users WHERE id = ?")
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	_, err = stmt.ExecContext(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	return nil
+}
+
 func (s *Storage) App(ctx context.Context) (models.App, error) {
 	const op = "storage.sqlite.App"
 

@@ -49,7 +49,7 @@ func NewRest(
 		panic(err)
 	}
 
-	coreService := core.New(log, storage, storage, storage, storage, tokenTTL)
+	coreService := core.New(log, storage, storage, storage, storage, storage, tokenTTL)
 	restApp := restapp.New(log, coreService, port)
 
 	return &App{

@@ -40,6 +40,7 @@ func (a *App) Run() error {
 	const op = "restapp.Run"
 
 	router := mux.NewRouter()
+	router.HandleFunc("/user", a.coreService.DeleteUserHandler).Methods("DELETE")
 	router.HandleFunc("/articles", a.coreService.GetArticlesHandler).Methods("GET")
 	router.HandleFunc("/poets", a.coreService.GetPoetsHandler).Methods("GET")
 	router.HandleFunc("/authors", a.coreService.GetAuthorHandler).Methods("GET")
