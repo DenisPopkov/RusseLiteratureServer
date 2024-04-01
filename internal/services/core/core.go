@@ -17,14 +17,17 @@ type UserProvider interface {
 
 type PoetProvider interface {
 	Poets(ctx context.Context, userId int64) ([]models.Poet, error)
+	UpdatePoetIsFave(ctx context.Context, userID int64, poetID int64, isFave string) ([]models.Poet, error)
 }
 
 type ArticleProvider interface {
 	Articles(ctx context.Context, userId int64) ([]models.Article, error)
+	UpdateArticleIsFave(ctx context.Context, userID int64, articleID int64, isFave string) ([]models.Article, error)
 }
 
 type AuthorProvider interface {
 	Authors(ctx context.Context, userId int64) ([]models.Author, error)
+	UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64, isFave string) ([]models.Author, error)
 }
 
 type FeedProvider interface {
@@ -171,4 +174,103 @@ func (c *Core) DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNoContent)
+}
+
+// UpdateAuthorIsFaveHandler handles the HTTP PATCH request to update the isFave field for an author.
+func (c *Core) UpdateAuthorIsFaveHandler(w http.ResponseWriter, r *http.Request) {
+	const op = "core.UpdateAuthorIsFaveHandler"
+
+	userIDStr := r.URL.Query().Get("userId")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	authorIDStr := r.URL.Query().Get("authorId")
+	authorID, err := strconv.ParseInt(authorIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	isFave := r.URL.Query().Get("isFave")
+
+	updatedAuthors, err := c.authorProvider.UpdateAuthorIsFave(r.Context(), userID, authorID, isFave)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(updatedAuthors); err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+}
+
+// UpdateArticleIsFaveHandler handles the HTTP PATCH request to update the isFave field for an author.
+func (c *Core) UpdateArticleIsFaveHandler(w http.ResponseWriter, r *http.Request) {
+	const op = "core.UpdateArticleIsFaveHandler"
+
+	userIDStr := r.URL.Query().Get("userId")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	authorIDStr := r.URL.Query().Get("articleId")
+	articleID, err := strconv.ParseInt(authorIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	isFave := r.URL.Query().Get("isFave")
+
+	updatedAuthors, err := c.articleProvider.UpdateArticleIsFave(r.Context(), userID, articleID, isFave)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(updatedAuthors); err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+}
+
+// UpdatePoetIsFaveHandler handles the HTTP PATCH request to update the isFave field for an author.
+func (c *Core) UpdatePoetIsFaveHandler(w http.ResponseWriter, r *http.Request) {
+	const op = "core.UpdatePoetIsFaveHandler"
+
+	userIDStr := r.URL.Query().Get("userId")
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	poetIDStr := r.URL.Query().Get("poetId")
+	poetID, err := strconv.ParseInt(poetIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	isFave := r.URL.Query().Get("isFave")
+
+	updatedAuthors, err := c.poetProvider.UpdatePoetIsFave(r.Context(), userID, poetID, isFave)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(updatedAuthors); err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
 }

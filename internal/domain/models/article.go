@@ -5,5 +5,5 @@ type Article struct {
 	Name   string
 	Image  string
 	Clip   int64
-	IsFave bool
+	IsFave string
 }

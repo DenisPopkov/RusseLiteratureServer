@@ -9,6 +9,8 @@ import (
 	"github.com/mattn/go-sqlite3"
 	"sso/internal/domain/models"
 	"sso/internal/storage"
+	"strconv"
+	"strings"
 )
 
 type Storage struct {
@@ -58,29 +60,29 @@ func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (
 		return id, fmt.Errorf("%s: failed to update feed: %w", op, err)
 	}
 
-	authors := map[string]bool{
-		"1001": false,
-		"1002": false,
-		"1003": false,
-		"1004": false,
+	authors := map[string]string{
+		"1001": "false",
+		"1002": "false",
+		"1003": "false",
+		"1004": "false",
 	}
 	authorsJson, err := json.Marshal(authors)
 	if err != nil {
 		panic(err)
 	}
 
-	articles := map[string]bool{
-		"2001": false,
-		"2002": false,
+	articles := map[string]string{
+		"2001": "false",
+		"2002": "false",
 	}
 	articlesJson, err := json.Marshal(articles)
 	if err != nil {
 		panic(err)
 	}
 
-	poets := map[string]bool{
-		"3001": false,
-		"3002": false,
+	poets := map[string]string{
+		"3001": "false",
+		"3002": "false",
 	}
 	poetsJson, err := json.Marshal(poets)
 	if err != nil {
@@ -288,6 +290,138 @@ func (s *Storage) DeleteUser(ctx context.Context, userID int64) error {
 	}
 
 	return nil
+}
+
+// UpdateAuthorIsFave updates the isFave field for an author in the feed JSON by their ID.
+func (s *Storage) UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64, isFave string) ([]models.Author, error) {
+	const op = "storage.sqlite.UpdateAuthorIsFave"
+
+	var authorsJSON string
+	err := s.db.QueryRowContext(ctx, "SELECT authors FROM feed WHERE id = ?", userID).Scan(&authorsJSON)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	strBool, err := strconv.ParseBool(isFave)
+	old := !strBool
+
+	updatedAuthorsJSON := strings.Replace(authorsJSON, fmt.Sprintf(`"%d":"%s"`, authorID, strconv.FormatBool(old)), fmt.Sprintf(`"%d":"%s"`, authorID, isFave), 1)
+
+	_, err = s.db.ExecContext(ctx, "UPDATE feed SET authors = ? WHERE id = ?", updatedAuthorsJSON, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	rows, err := s.db.QueryContext(ctx, "SELECT * FROM authors")
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var updatedAuthors []models.Author
+	for rows.Next() {
+		var author models.Author
+		if err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip, &author.IsFave); err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		if author.ID == authorID {
+			author.IsFave = isFave
+		}
+		updatedAuthors = append(updatedAuthors, author)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return updatedAuthors, nil
+}
+
+// UpdateArticleIsFave updates the isFave field for an article in the feed JSON by their ID.
+func (s *Storage) UpdateArticleIsFave(ctx context.Context, userID int64, articleID int64, isFave string) ([]models.Article, error) {
+	const op = "storage.sqlite.UpdateAuthorIsFave"
+
+	var articleJSON string
+	err := s.db.QueryRowContext(ctx, "SELECT articles FROM feed WHERE id = ?", userID).Scan(&articleJSON)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	strBool, err := strconv.ParseBool(isFave)
+	old := !strBool
+
+	updatedArticleJSON := strings.Replace(articleJSON, fmt.Sprintf(`"%d":"%s"`, articleID, strconv.FormatBool(old)), fmt.Sprintf(`"%d":"%s"`, articleID, isFave), 1)
+
+	_, err = s.db.ExecContext(ctx, "UPDATE feed SET articles = ? WHERE id = ?", updatedArticleJSON, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	rows, err := s.db.QueryContext(ctx, "SELECT * FROM articles")
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var updatedArticles []models.Article
+	for rows.Next() {
+		var article models.Article
+		if err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.IsFave); err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		if article.ID == articleID {
+			article.IsFave = isFave
+		}
+		updatedArticles = append(updatedArticles, article)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return updatedArticles, nil
+}
+
+// UpdatePoetIsFave updates the isFave field for a poet in the feed JSON by their ID.
+func (s *Storage) UpdatePoetIsFave(ctx context.Context, userID int64, poetID int64, isFave string) ([]models.Poet, error) {
+	const op = "storage.sqlite.UpdateAuthorIsFave"
+
+	var poetJSON string
+	err := s.db.QueryRowContext(ctx, "SELECT poets FROM feed WHERE id = ?", userID).Scan(&poetJSON)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	strBool, err := strconv.ParseBool(isFave)
+	old := !strBool
+
+	updatedPoetJSON := strings.Replace(poetJSON, fmt.Sprintf(`"%d":"%s"`, poetID, strconv.FormatBool(old)), fmt.Sprintf(`"%d":"%s"`, poetID, isFave), 1)
+
+	_, err = s.db.ExecContext(ctx, "UPDATE feed SET poets = ? WHERE id = ?", updatedPoetJSON, userID)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	rows, err := s.db.QueryContext(ctx, "SELECT * FROM poets")
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+
+	var updatedPoets []models.Poet
+	for rows.Next() {
+		var poet models.Poet
+		if err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip, &poet.IsFave); err != nil {
+			return nil, fmt.Errorf("%s: %w", op, err)
+		}
+		if poet.ID == poetID {
+			poet.IsFave = isFave
+		}
+		updatedPoets = append(updatedPoets, poet)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return updatedPoets, nil
 }
 
 func (s *Storage) App(ctx context.Context) (models.App, error) {
