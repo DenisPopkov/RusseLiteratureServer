@@ -6,7 +6,7 @@ require github.com/ilyakaznacheev/cleanenv v1.5.0
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/DenisPopkov/protos v0.0.8 // indirect
+	github.com/DenisPopkov/protos v0.0.11 // indirect
 	github.com/brianvoe/gofakeit/v6 v6.28.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
@@ -30,7 +30,7 @@ require (
 	golang.org/x/net v0.22.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240311132316-a219d84964c2 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240311173647-c811ad7063a7 // indirect
 	google.golang.org/grpc v1.62.1 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

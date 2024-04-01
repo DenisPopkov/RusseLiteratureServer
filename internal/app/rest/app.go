@@ -41,6 +41,7 @@ func (a *App) Run() error {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/author", a.coreService.GetAuthorHandler).Methods("GET")
+	router.HandleFunc("/feed", a.coreService.GetFeedHandler).Methods("GET")
 
 	a.httpServer = &http.Server{
 		Addr:    fmt.Sprintf(":%d", a.port),

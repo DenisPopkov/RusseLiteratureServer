@@ -26,6 +26,7 @@ func TestRegisterLogin_Login_HappyPath(t *testing.T) {
 		Phone:    phone,
 		Password: pass,
 	})
+
 	require.NoError(t, err)
 	assert.NotEmpty(t, respReg.GetUserId())
 
