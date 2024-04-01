@@ -119,43 +119,12 @@ func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	return user, nil
 }
 
-// Author get authors from db.
-func (s *Storage) Author(ctx context.Context) ([]models.Author, error) {
-	const op = "storage.sqlite.GetAuthors"
-
-	stmt, err := s.db.Prepare("SELECT * FROM authors")
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	rows, err := stmt.QueryContext(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	var authors []models.Author
-	for rows.Next() {
-		var author models.Author
-		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip)
-		if err != nil {
-			return nil, fmt.Errorf("%s: %w", op, err)
-		}
-		authors = append(authors, author)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("%s: %w", op, err)
-	}
-
-	return authors, nil
-}
-
 // Authors retrieves authors from the database for a given user ID.
 func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, error) {
 	const op = "storage.sqlite.GetAuthors"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip
+		SELECT id, name, image, clip, isFave
 		FROM authors 
 		WHERE id IN (
 			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
@@ -176,7 +145,7 @@ func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, e
 	var authors []models.Author
 	for rows.Next() {
 		var author models.Author
-		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip)
+		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip, &author.IsFave)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -195,7 +164,7 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	const op = "storage.sqlite.GetArticles"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip
+		SELECT id, name, image, clip, isFave
 		FROM articles 
 		WHERE id IN (
 			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
@@ -217,7 +186,7 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	var articles []models.Article
 	for rows.Next() {
 		var article models.Article
-		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip)
+		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.IsFave)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -236,7 +205,7 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 	const op = "storage.sqlite.GetPoets"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip
+		SELECT id, name, image, clip, isFave
 		FROM poets 
 		WHERE id IN (
 			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
@@ -258,7 +227,7 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 	var poets []models.Poet
 	for rows.Next() {
 		var poet models.Poet
-		err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip)
+		err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip, &poet.IsFave)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
