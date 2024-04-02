@@ -3,7 +3,9 @@ CREATE TABLE IF NOT EXISTS users
     id        INTEGER PRIMARY KEY,
     phone     TEXT    NOT NULL UNIQUE,
     pass_hash BLOB    NOT NULL,
-    feed      INTEGER NOT NULL
+    feed      INTEGER NOT NULL,
+    name      TEXT    NOT NULL,
+    image     TEXT    NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_phone ON users (phone);
 

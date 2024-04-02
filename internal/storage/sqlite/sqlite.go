@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mattn/go-sqlite3"
+	"math/rand"
 	"sso/internal/domain/models"
 	"sso/internal/storage"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Storage struct {
@@ -35,12 +37,23 @@ func (s *Storage) Stop() error {
 func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (int64, error) {
 	const op = "storage.sqlite.SaveUser"
 
-	stmt, err := s.db.Prepare("INSERT INTO users(phone, pass_hash, feed) VALUES(?, ?, ?)")
+	stmt, err := s.db.Prepare("INSERT INTO users(phone, pass_hash, feed, name, image) VALUES(?, ?, ?, ?, ?)")
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	res, err := stmt.ExecContext(ctx, phone, passHash, 0)
+	authorsName := map[int]string{
+		0: "Фёдор Достоевский",
+	}
+
+	authorsImage := map[int]string{
+		0: "https://iili.io/JwdlbqJ.png",
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	randomKey := rand.Intn(len(authorsImage))
+
+	res, err := stmt.ExecContext(ctx, phone, passHash, 0, authorsName[randomKey], authorsImage[randomKey])
 	if err != nil {
 		var sqliteErr sqlite3.Error
 		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
@@ -101,7 +114,7 @@ func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (
 func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	const op = "storage.sqlite.User"
 
-	stmt, err := s.db.Prepare("SELECT id, phone, pass_hash, feed FROM users WHERE phone = ?")
+	stmt, err := s.db.Prepare("SELECT id, phone, pass_hash, feed, name, image FROM users WHERE phone = ?")
 	if err != nil {
 		return models.User{}, fmt.Errorf("%s: %w", op, err)
 	}
@@ -109,7 +122,7 @@ func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	row := stmt.QueryRowContext(ctx, phone)
 
 	var user models.User
-	err = row.Scan(&user.ID, &user.Phone, &user.PassHash, &user.Feed)
+	err = row.Scan(&user.ID, &user.Phone, &user.PassHash, &user.Feed, &user.Name, &user.Image)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.User{}, fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)

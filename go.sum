@@ -20,6 +20,10 @@ github.com/DenisPopkov/protos v0.0.12 h1:zdIRXJqdY/mUL0M3d4WjQqqcndxA65dLWbYQjqR
 github.com/DenisPopkov/protos v0.0.12/go.mod h1:JNRefvFGF4fuc/K4jWHfsqJadwmgMD/anTYi8YgSaoo=
 github.com/DenisPopkov/protos v0.0.13 h1:BC7mBzdWO2VHE/iyFjwf4Qunj75kCpjyFZK5qbKdZCo=
 github.com/DenisPopkov/protos v0.0.13/go.mod h1:JNRefvFGF4fuc/K4jWHfsqJadwmgMD/anTYi8YgSaoo=
+github.com/DenisPopkov/protos v0.0.16 h1:aLidhfnzcjSRuK2BtPVY6q8YyklWd/5SZxhQz3XvKgY=
+github.com/DenisPopkov/protos v0.0.16/go.mod h1:JNRefvFGF4fuc/K4jWHfsqJadwmgMD/anTYi8YgSaoo=
+github.com/DenisPopkov/protos v0.0.17 h1:QqfPxP54YvcamNQ3a3GRayJW/KPKuVLo1V0NT/0d228=
+github.com/DenisPopkov/protos v0.0.17/go.mod h1:JNRefvFGF4fuc/K4jWHfsqJadwmgMD/anTYi8YgSaoo=
 github.com/brianvoe/gofakeit/v6 v6.28.0 h1:Xib46XXuQfmlLS2EXRuJpqcw8St6qSZz75OUo0tgAW4=
 github.com/brianvoe/gofakeit/v6 v6.28.0/go.mod h1:Xj58BMSnFqcn/fAQeSK+/PLtC5kSb7FJIq4JyGa8vEs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

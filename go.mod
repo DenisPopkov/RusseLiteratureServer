@@ -6,7 +6,7 @@ require github.com/ilyakaznacheev/cleanenv v1.5.0
 
 require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/DenisPopkov/protos v0.0.13 // indirect
+	github.com/DenisPopkov/protos v0.0.17 // indirect
 	github.com/brianvoe/gofakeit/v6 v6.28.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
