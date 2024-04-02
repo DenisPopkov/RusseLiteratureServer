@@ -1,8 +1,7 @@
 package models
 
 type Clip struct {
-	ID    int64
-	Title string
-	Text  string
-	Quiz  int64
+	ID   int64      `json:"id"`
+	Text []ClipText `json:"text"`
+	Quiz Quiz       `json:"quiz"`
 }

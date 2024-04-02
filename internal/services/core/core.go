@@ -30,6 +30,14 @@ type AuthorProvider interface {
 	UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64, isFave string) ([]models.Author, error)
 }
 
+type ClipProvider interface {
+	GetClip(ctx context.Context, clipId int64) (models.Clip, error)
+}
+
+type QuizProvider interface {
+	GetQuiz(ctx context.Context, quizId int64) (models.Quiz, error)
+}
+
 type FeedProvider interface {
 	Feed(ctx context.Context, userId int64) (models.Feed, error)
 }
@@ -37,6 +45,8 @@ type FeedProvider interface {
 type Core struct {
 	log             *slog.Logger
 	userProvider    UserProvider
+	quizProvider    QuizProvider
+	clipProvider    ClipProvider
 	poetProvider    PoetProvider
 	articleProvider ArticleProvider
 	authorProvider  AuthorProvider
@@ -47,6 +57,8 @@ type Core struct {
 func New(
 	log *slog.Logger,
 	userProvider UserProvider,
+	quizProvider QuizProvider,
+	clipProvider ClipProvider,
 	poetProvider PoetProvider,
 	articleProvider ArticleProvider,
 	authorProvider AuthorProvider,
@@ -56,6 +68,8 @@ func New(
 	return &Core{
 		log:             log,
 		userProvider:    userProvider,
+		quizProvider:    quizProvider,
+		clipProvider:    clipProvider,
 		poetProvider:    poetProvider,
 		articleProvider: articleProvider,
 		authorProvider:  authorProvider,
@@ -270,6 +284,53 @@ func (c *Core) UpdatePoetIsFaveHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(updatedAuthors); err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (c *Core) GetClipHandler(w http.ResponseWriter, r *http.Request) {
+	const op = "core.GetClipHandler"
+
+	clipIDStr := r.URL.Query().Get("clipId")
+	clipID, err := strconv.ParseInt(clipIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	clips, err := c.clipProvider.GetClip(r.Context(), clipID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(clips); err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (c *Core) GetQuizHandler(w http.ResponseWriter, r *http.Request) {
+	const op = "core.GetQuizHandler"
+
+	quizIDStr := r.URL.Query().Get("quizId")
+	quizID, err := strconv.ParseInt(quizIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	quiz, err := c.quizProvider.GetQuiz(r.Context(), quizID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if err := json.NewEncoder(w).Encode(quiz); err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
 	}

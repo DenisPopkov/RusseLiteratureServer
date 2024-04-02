@@ -44,6 +44,8 @@ func (a *App) Run() error {
 	router.HandleFunc("/articles", a.coreService.UpdateArticleIsFaveHandler).Methods("PATCH")
 	router.HandleFunc("/authors", a.coreService.UpdateAuthorIsFaveHandler).Methods("PATCH")
 	router.HandleFunc("/user", a.coreService.DeleteUserHandler).Methods("DELETE")
+	router.HandleFunc("/quiz", a.coreService.GetQuizHandler).Methods("GET")
+	router.HandleFunc("/clip", a.coreService.GetClipHandler).Methods("GET")
 	router.HandleFunc("/articles", a.coreService.GetArticlesHandler).Methods("GET")
 	router.HandleFunc("/poets", a.coreService.GetPoetsHandler).Methods("GET")
 	router.HandleFunc("/authors", a.coreService.GetAuthorHandler).Methods("GET")

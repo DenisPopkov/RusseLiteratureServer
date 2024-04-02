@@ -127,11 +127,11 @@ func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, e
 
 	stmt, err := s.db.Prepare(`
 		SELECT id, name, image, clip, isFave
-		FROM authors 
+		FROM authors
 		WHERE id IN (
-			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
-			FROM feed 
-			CROSS JOIN json_each(feed.authors) AS json_each 
+			SELECT DISTINCT CAST(json_each.key AS INTEGER)
+			FROM feed
+			CROSS JOIN json_each(feed.authors) AS json_each
 			WHERE feed.id = ?)
 	`)
 	if err != nil {
@@ -422,6 +422,81 @@ func (s *Storage) UpdatePoetIsFave(ctx context.Context, userID int64, poetID int
 	}
 
 	return updatedPoets, nil
+}
+
+// GetClip retrieves a clip from the database by ID.
+func (s *Storage) GetClip(ctx context.Context, clipID int64) (models.Clip, error) {
+	const op = "storage.sqlite.GetClip"
+
+	var clipJSON string
+	err := s.db.QueryRowContext(ctx, "SELECT text FROM clip WHERE id = ?", clipID).Scan(&clipJSON)
+	if err != nil {
+		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	clipJSON = strings.TrimPrefix(clipJSON, "\xef\xbb\xbf")
+
+	var clipData struct {
+		Clip []models.ClipText `json:"clip"`
+	}
+	err = json.Unmarshal([]byte(clipJSON), &clipData)
+	if err != nil {
+		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	quiz, err := s.GetQuiz(ctx, clipID)
+	if err != nil {
+		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	clip := models.Clip{
+		ID:   clipID,
+		Text: clipData.Clip,
+		Quiz: quiz,
+	}
+
+	return clip, nil
+}
+
+// GetQuiz retrieves a quiz from the database by ID.
+func (s *Storage) GetQuiz(ctx context.Context, quizID int64) (models.Quiz, error) {
+	const op = "storage.sqlite.GetQuiz"
+
+	var quizData models.Quiz
+	var answersJSON string // Declare answersJSON variable
+	err := s.db.QueryRowContext(ctx, "SELECT id, question, description, image, answers FROM quiz WHERE id = ?", quizID).Scan(&quizData.ID, &quizData.Question, &quizData.Description, &quizData.Image, &answersJSON)
+	if err != nil {
+		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	answersJSON = strings.TrimPrefix(answersJSON, "\xef\xbb\xbf")
+
+	var answersMap map[string][]int64
+	err = json.Unmarshal([]byte(answersJSON), &answersMap)
+	if err != nil {
+		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	var answers []models.Answer
+	answerIDs, ok := answersMap[strconv.FormatInt(quizID, 10)] // Convert quizID to string
+	if !ok {
+		return models.Quiz{}, fmt.Errorf("%s: no answers found for quiz ID %d", op, quizID)
+	}
+
+	for _, answerID := range answerIDs {
+		var answer models.Answer
+		err := s.db.QueryRowContext(ctx, "SELECT id, text, isRight FROM answers WHERE id = ?", answerID).
+			Scan(&answer.ID, &answer.Text, &answer.IsRight)
+		if err != nil {
+			return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
+		}
+
+		answers = append(answers, answer)
+	}
+
+	quizData.Answers = answers
+
+	return quizData, nil
 }
 
 func (s *Storage) App(ctx context.Context) (models.App, error) {
