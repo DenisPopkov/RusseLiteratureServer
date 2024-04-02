@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"log/slog"
+	"math/rand"
 	"sso/internal/domain/models"
 	"sso/internal/lib/jwt"
 	"sso/internal/lib/logger/sl"
@@ -112,7 +113,7 @@ func (a *Auth) Login(
 
 // RegisterNewUser registers new user in the system and returns user ID.
 // If user with given username already exists, returns error.
-func (a *Auth) RegisterNewUser(ctx context.Context, phone string, pass string) (int64, error) {
+func (a *Auth) RegisterNewUser(ctx context.Context, phone string, pass string) (int64, string, string, error) {
 	const op = "Auth.RegisterNewUser"
 
 	log := a.log.With(
@@ -126,15 +127,25 @@ func (a *Auth) RegisterNewUser(ctx context.Context, phone string, pass string) (
 	if err != nil {
 		log.Error("failed to generate password hash", sl.Err(err))
 
-		return 0, fmt.Errorf("%s: %w", op, err)
+		return 0, "", "", fmt.Errorf("%s: %w", op, err)
+	}
+
+	randomKey := rand.Int()
+
+	authorsName := map[int]string{
+		0: "Фёдор Достоевский",
+	}
+
+	authorsImage := map[int]string{
+		0: "https://iili.io/JwdlbqJ.png",
 	}
 
 	id, err := a.usrSaver.SaveUser(ctx, phone, passHash)
 	if err != nil {
 		log.Error("failed to save user", sl.Err(err))
 
-		return 0, fmt.Errorf("%s: %w", op, err)
+		return 0, "", "", fmt.Errorf("%s: %w", op, err)
 	}
 
-	return id, nil
+	return id, authorsName[randomKey], authorsImage[randomKey], nil
 }
