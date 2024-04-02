@@ -1,9 +1,9 @@
 package models
 
 type Article struct {
-	ID     int64
-	Name   string
-	Image  string
-	Clip   int64
-	IsFave string
+	ID     int64  `json:"id"`
+	Name   string `json:"name"`
+	Image  string `json:"image"`
+	Clip   int64  `json:"clip"`
+	IsFave string `json:"is_fave"`
 }
