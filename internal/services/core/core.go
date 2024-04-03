@@ -13,6 +13,7 @@ import (
 
 type UserProvider interface {
 	DeleteUser(ctx context.Context, userId int64) error
+	GetUser(ctx context.Context, userId int64) (models.UserData, error)
 }
 
 type PoetProvider interface {
@@ -331,6 +332,29 @@ func (c *Core) GetQuizHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(w).Encode(quiz); err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (c *Core) GetUserHandler(w http.ResponseWriter, r *http.Request) {
+	const op = "core.GetUserHandler"
+
+	userIdStr := r.URL.Query().Get("userId")
+	userId, err := strconv.ParseInt(userIdStr, 10, 64)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+		return
+	}
+
+	clips, err := c.userProvider.GetUser(r.Context(), userId)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(clips); err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
 	}

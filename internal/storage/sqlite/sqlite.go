@@ -134,6 +134,30 @@ func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	return user, nil
 }
 
+// GetUser returns user by id.
+func (s *Storage) GetUser(ctx context.Context, userId int64) (models.UserData, error) {
+	const op = "storage.sqlite.GetUser"
+
+	stmt, err := s.db.Prepare("SELECT feed, name, image FROM users WHERE id = ?")
+	if err != nil {
+		return models.UserData{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	row := stmt.QueryRowContext(ctx, userId)
+
+	var user models.UserData
+	err = row.Scan(&user.Feed, &user.Name, &user.Image)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return models.UserData{}, fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)
+		}
+
+		return models.UserData{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return user, nil
+}
+
 // Authors retrieves authors from the database for a given user ID.
 func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, error) {
 	const op = "storage.sqlite.GetAuthors"
@@ -260,19 +284,16 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 func (s *Storage) Feed(ctx context.Context, userId int64) (models.Feed, error) {
 	const op = "storage.sqlite.GetFeed"
 
-	// Get authors
 	authors, err := s.Authors(ctx, userId)
 	if err != nil {
 		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	// Get articles
 	articles, err := s.Articles(ctx, userId)
 	if err != nil {
 		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	// Get poets
 	poets, err := s.Poets(ctx, userId)
 	if err != nil {
 		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
@@ -476,7 +497,7 @@ func (s *Storage) GetQuiz(ctx context.Context, quizID int64) (models.Quiz, error
 	const op = "storage.sqlite.GetQuiz"
 
 	var quizData models.Quiz
-	var answersJSON string // Declare answersJSON variable
+	var answersJSON string
 	err := s.db.QueryRowContext(ctx, "SELECT id, question, description, image, answers FROM quiz WHERE id = ?", quizID).Scan(&quizData.ID, &quizData.Question, &quizData.Description, &quizData.Image, &answersJSON)
 	if err != nil {
 		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
@@ -491,7 +512,7 @@ func (s *Storage) GetQuiz(ctx context.Context, quizID int64) (models.Quiz, error
 	}
 
 	var answers []models.Answer
-	answerIDs, ok := answersMap[strconv.FormatInt(quizID, 10)] // Convert quizID to string
+	answerIDs, ok := answersMap[strconv.FormatInt(quizID, 10)]
 	if !ok {
 		return models.Quiz{}, fmt.Errorf("%s: no answers found for quiz ID %d", op, quizID)
 	}
