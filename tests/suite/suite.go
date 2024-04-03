@@ -38,7 +38,7 @@ func New(t *testing.T) (context.Context, *Suite) {
 
 	cc, err := grpc.DialContext(context.Background(),
 		grpcAddress(cfg),
-		grpc.WithTransportCredentials(insecure.NewCredentials())) // Используем insecure-коннект для тестов
+		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("grpc server connection failed: %v", err)
 	}

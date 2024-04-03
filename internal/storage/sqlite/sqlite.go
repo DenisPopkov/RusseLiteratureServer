@@ -56,7 +56,7 @@ func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (
 	res, err := stmt.ExecContext(ctx, phone, passHash, 0, authorsName[randomKey], authorsImage[randomKey])
 	if err != nil {
 		var sqliteErr sqlite3.Error
-		if errors.As(err, &sqliteErr) && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
+		if errors.As(err, &sqliteErr) && errors.Is(sqliteErr.ExtendedCode, sqlite3.ErrConstraintUnique) {
 			return 0, fmt.Errorf("%s: %w", op, storage.ErrUserExists)
 		}
 
@@ -318,7 +318,13 @@ func (s *Storage) DeleteUser(ctx context.Context, userID int64) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
+	stmtFeed, err := s.db.Prepare("DELETE FROM feed WHERE id = ?")
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
 	_, err = stmt.ExecContext(ctx, userID)
+	_, err = stmtFeed.ExecContext(ctx, userID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
