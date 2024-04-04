@@ -203,7 +203,7 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	const op = "storage.sqlite.GetArticles"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip, isFave
+		SELECT id, name, image, clip, isFave, description
 		FROM articles 
 		WHERE id IN (
 			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
@@ -225,7 +225,7 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	var articles []models.Article
 	for rows.Next() {
 		var article models.Article
-		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.IsFave)
+		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.IsFave, &article.Description)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
