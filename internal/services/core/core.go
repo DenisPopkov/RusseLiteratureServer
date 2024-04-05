@@ -18,17 +18,17 @@ type UserProvider interface {
 
 type PoetProvider interface {
 	Poets(ctx context.Context, userId int64) ([]models.Poet, error)
-	UpdatePoetIsFave(ctx context.Context, userID int64, poetID int64, isFave string) ([]models.Poet, error)
+	UpdatePoetIsFave(ctx context.Context, userID int64, poetID int64, isFave string) error
 }
 
 type ArticleProvider interface {
 	Articles(ctx context.Context, userId int64) ([]models.Article, error)
-	UpdateArticleIsFave(ctx context.Context, userID int64, articleID int64, isFave string) ([]models.Article, error)
+	UpdateArticleIsFave(ctx context.Context, userID int64, articleID int64, isFave string) error
 }
 
 type AuthorProvider interface {
 	Authors(ctx context.Context, userId int64) ([]models.Author, error)
-	UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64, isFave string) ([]models.Author, error)
+	UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64, isFave string) error
 }
 
 type ClipProvider interface {
@@ -211,17 +211,13 @@ func (c *Core) UpdateAuthorIsFaveHandler(w http.ResponseWriter, r *http.Request)
 
 	isFave := r.URL.Query().Get("isFave")
 
-	updatedAuthors, err := c.authorProvider.UpdateAuthorIsFave(r.Context(), userID, authorID, isFave)
+	err = c.authorProvider.UpdateAuthorIsFave(r.Context(), userID, authorID, isFave)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(updatedAuthors); err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
-		return
-	}
 }
 
 // UpdateArticleIsFaveHandler handles the HTTP PATCH request to update the isFave field for an author.
@@ -244,17 +240,13 @@ func (c *Core) UpdateArticleIsFaveHandler(w http.ResponseWriter, r *http.Request
 
 	isFave := r.URL.Query().Get("isFave")
 
-	updatedAuthors, err := c.articleProvider.UpdateArticleIsFave(r.Context(), userID, articleID, isFave)
+	err = c.articleProvider.UpdateArticleIsFave(r.Context(), userID, articleID, isFave)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(updatedAuthors); err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
-		return
-	}
 }
 
 // UpdatePoetIsFaveHandler handles the HTTP PATCH request to update the isFave field for an author.
@@ -277,17 +269,13 @@ func (c *Core) UpdatePoetIsFaveHandler(w http.ResponseWriter, r *http.Request) {
 
 	isFave := r.URL.Query().Get("isFave")
 
-	updatedAuthors, err := c.poetProvider.UpdatePoetIsFave(r.Context(), userID, poetID, isFave)
+	err = c.poetProvider.UpdatePoetIsFave(r.Context(), userID, poetID, isFave)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(updatedAuthors); err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
-		return
-	}
 }
 
 func (c *Core) GetClipHandler(w http.ResponseWriter, r *http.Request) {
