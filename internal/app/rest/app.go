@@ -50,7 +50,6 @@ func (a *App) Run() error {
 	router.HandleFunc("/articles", a.coreService.GetArticlesHandler).Methods("GET")
 	router.HandleFunc("/poets", a.coreService.GetPoetsHandler).Methods("GET")
 	router.HandleFunc("/authors", a.coreService.GetAuthorHandler).Methods("GET")
-	router.HandleFunc("/feed", a.coreService.GetFeedHandler).Methods("GET")
 
 	a.httpServer = &http.Server{
 		Addr:    fmt.Sprintf(":%d", a.port),

@@ -18,17 +18,17 @@ type UserProvider interface {
 
 type PoetProvider interface {
 	Poets(ctx context.Context, userId int64) ([]models.Poet, error)
-	UpdatePoetIsFave(ctx context.Context, userID int64, poetID int64, isFave string) error
+	UpdatePoetIsFave(ctx context.Context, userID int64, poetID int64) error
 }
 
 type ArticleProvider interface {
 	Articles(ctx context.Context, userId int64) ([]models.Article, error)
-	UpdateArticleIsFave(ctx context.Context, userID int64, articleID int64, isFave string) error
+	UpdateArticleIsFave(ctx context.Context, userID int64, articleID int64) error
 }
 
 type AuthorProvider interface {
 	Authors(ctx context.Context, userId int64) ([]models.Author, error)
-	UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64, isFave string) error
+	UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64) error
 }
 
 type ClipProvider interface {
@@ -39,10 +39,6 @@ type QuizProvider interface {
 	GetQuiz(ctx context.Context, quizId int64) (models.Quiz, error)
 }
 
-type FeedProvider interface {
-	Feed(ctx context.Context, userId int64) (models.Feed, error)
-}
-
 type Core struct {
 	log             *slog.Logger
 	userProvider    UserProvider
@@ -51,7 +47,6 @@ type Core struct {
 	poetProvider    PoetProvider
 	articleProvider ArticleProvider
 	authorProvider  AuthorProvider
-	feedProvider    FeedProvider
 	tokenTTL        time.Duration
 }
 
@@ -63,7 +58,6 @@ func New(
 	poetProvider PoetProvider,
 	articleProvider ArticleProvider,
 	authorProvider AuthorProvider,
-	feedProvider FeedProvider,
 	tokenTTL time.Duration,
 ) *Core {
 	return &Core{
@@ -74,31 +68,7 @@ func New(
 		poetProvider:    poetProvider,
 		articleProvider: articleProvider,
 		authorProvider:  authorProvider,
-		feedProvider:    feedProvider,
 		tokenTTL:        tokenTTL,
-	}
-}
-
-func (c *Core) GetFeedHandler(w http.ResponseWriter, r *http.Request) {
-	const op = "core.GetFeedHandler"
-
-	userIdStr := r.URL.Query().Get("userId")
-	userId, err := strconv.Atoi(userIdStr)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
-		return
-	}
-
-	feed, err := c.feedProvider.Feed(r.Context(), int64(userId))
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(feed); err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
-		return
 	}
 }
 
@@ -209,9 +179,7 @@ func (c *Core) UpdateAuthorIsFaveHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	isFave := r.URL.Query().Get("isFave")
-
-	err = c.authorProvider.UpdateAuthorIsFave(r.Context(), userID, authorID, isFave)
+	err = c.authorProvider.UpdateAuthorIsFave(r.Context(), userID, authorID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -238,9 +206,7 @@ func (c *Core) UpdateArticleIsFaveHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	isFave := r.URL.Query().Get("isFave")
-
-	err = c.articleProvider.UpdateArticleIsFave(r.Context(), userID, articleID, isFave)
+	err = c.articleProvider.UpdateArticleIsFave(r.Context(), userID, articleID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -267,9 +233,7 @@ func (c *Core) UpdatePoetIsFaveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	isFave := r.URL.Query().Get("isFave")
-
-	err = c.poetProvider.UpdatePoetIsFave(r.Context(), userID, poetID, isFave)
+	err = c.poetProvider.UpdatePoetIsFave(r.Context(), userID, poetID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return

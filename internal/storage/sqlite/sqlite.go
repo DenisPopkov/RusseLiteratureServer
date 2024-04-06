@@ -7,12 +7,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mattn/go-sqlite3"
-	"math/rand"
 	"sso/internal/domain/models"
 	"sso/internal/storage"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Storage struct {
@@ -37,29 +35,32 @@ func (s *Storage) Stop() error {
 func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (int64, error) {
 	const op = "storage.sqlite.SaveUser"
 
-	stmt, err := s.db.Prepare("INSERT INTO users(phone, pass_hash, feed, name, image) VALUES(?, ?, ?, ?, ?)")
+	userStmt, err := s.db.Prepare("INSERT INTO users(phone, pass_hash, name, image) VALUES(?, ?, ?, ?)")
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	authorsName := map[int]string{
-		0: "Фёдор Достоевский",
+	authorStmt, err := s.db.Prepare("INSERT INTO authors(userId, authorId, isFave) VALUES(?, ?, 0)")
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	authorsImage := map[int]string{
-		0: "https://iili.io/JwdlbqJ.png",
+	articleStmt, err := s.db.Prepare("INSERT INTO articles(userId, articleId, isFave) VALUES(?, ?, 0)")
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	rand.Seed(time.Now().UnixNano())
-	randomKey := rand.Intn(len(authorsImage))
+	poetStmt, err := s.db.Prepare("INSERT INTO poets(userId, poetId, isFave) VALUES(?, ?, 0)")
+	if err != nil {
+		return 0, fmt.Errorf("%s: %w", op, err)
+	}
 
-	res, err := stmt.ExecContext(ctx, phone, passHash, 0, authorsName[randomKey], authorsImage[randomKey])
+	res, err := userStmt.ExecContext(ctx, phone, passHash, "", "")
 	if err != nil {
 		var sqliteErr sqlite3.Error
 		if errors.As(err, &sqliteErr) && errors.Is(sqliteErr.ExtendedCode, sqlite3.ErrConstraintUnique) {
 			return 0, fmt.Errorf("%s: %w", op, storage.ErrUserExists)
 		}
-
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -68,43 +69,68 @@ func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	_, err = s.db.ExecContext(ctx, "UPDATE users SET feed = ? WHERE phone = ?", id, phone)
+	var authorIDs []int64
+	var poetIDs []int64
+	var articleIDs []int64
+
+	rows, err := s.db.QueryContext(ctx, "SELECT authorId FROM authors")
 	if err != nil {
-		return id, fmt.Errorf("%s: failed to update feed: %w", op, err)
+		return id, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var authorID int64
+		if err := rows.Scan(&authorID); err != nil {
+			return id, fmt.Errorf("%s: %w", op, err)
+		}
+		authorIDs = append(authorIDs, authorID)
 	}
 
-	authors := map[string]string{
-		"1001": "false",
-		"1002": "false",
-		"1003": "false",
-		"1004": "false",
-	}
-	authorsJson, err := json.Marshal(authors)
+	rows, err = s.db.QueryContext(ctx, "SELECT poetId FROM poets")
 	if err != nil {
-		panic(err)
+		return id, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var poetID int64
+		if err := rows.Scan(&poetID); err != nil {
+			return id, fmt.Errorf("%s: %w", op, err)
+		}
+		poetIDs = append(poetIDs, poetID)
 	}
 
-	articles := map[string]string{
-		"2001": "false",
-		"2002": "false",
-	}
-	articlesJson, err := json.Marshal(articles)
+	rows, err = s.db.QueryContext(ctx, "SELECT articleId FROM articles")
 	if err != nil {
-		panic(err)
+		return id, fmt.Errorf("%s: %w", op, err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var articleID int64
+		if err := rows.Scan(&articleID); err != nil {
+			return id, fmt.Errorf("%s: %w", op, err)
+		}
+		articleIDs = append(articleIDs, articleID)
 	}
 
-	poets := map[string]string{
-		"3001": "false",
-		"3002": "false",
-	}
-	poetsJson, err := json.Marshal(poets)
-	if err != nil {
-		panic(err)
+	for _, authorID := range authorIDs {
+		_, err := authorStmt.ExecContext(ctx, id, authorID)
+		if err != nil {
+			return id, fmt.Errorf("%s: %w", op, err)
+		}
 	}
 
-	_, err = s.db.ExecContext(ctx, "INSERT INTO feed(id, authors, articles, poets) VALUES(?, ?, ?, ?)", id, string(authorsJson), string(articlesJson), string(poetsJson))
-	if err != nil {
-		return id, fmt.Errorf("%s: failed to add feed: %w", op, err)
+	for _, poetID := range poetIDs {
+		_, err := poetStmt.ExecContext(ctx, id, poetID)
+		if err != nil {
+			return id, fmt.Errorf("%s: %w", op, err)
+		}
+	}
+
+	for _, articleID := range articleIDs {
+		_, err := articleStmt.ExecContext(ctx, id, articleID)
+		if err != nil {
+			return id, fmt.Errorf("%s: %w", op, err)
+		}
 	}
 
 	return id, nil
@@ -114,7 +140,7 @@ func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (
 func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	const op = "storage.sqlite.User"
 
-	stmt, err := s.db.Prepare("SELECT id, phone, pass_hash, feed, name, image FROM users WHERE phone = ?")
+	stmt, err := s.db.Prepare("SELECT id, phone, pass_hash, name, image FROM users WHERE phone = ?")
 	if err != nil {
 		return models.User{}, fmt.Errorf("%s: %w", op, err)
 	}
@@ -122,7 +148,7 @@ func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 	row := stmt.QueryRowContext(ctx, phone)
 
 	var user models.User
-	err = row.Scan(&user.ID, &user.Phone, &user.PassHash, &user.Feed, &user.Name, &user.Image)
+	err = row.Scan(&user.ID, &user.Phone, &user.PassHash, &user.Name, &user.Image)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.User{}, fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)
@@ -138,7 +164,7 @@ func (s *Storage) User(ctx context.Context, phone string) (models.User, error) {
 func (s *Storage) GetUser(ctx context.Context, userId int64) (models.UserData, error) {
 	const op = "storage.sqlite.GetUser"
 
-	stmt, err := s.db.Prepare("SELECT feed, name, image FROM users WHERE id = ?")
+	stmt, err := s.db.Prepare("SELECT name, image FROM users WHERE id = ?")
 	if err != nil {
 		return models.UserData{}, fmt.Errorf("%s: %w", op, err)
 	}
@@ -146,7 +172,7 @@ func (s *Storage) GetUser(ctx context.Context, userId int64) (models.UserData, e
 	row := stmt.QueryRowContext(ctx, userId)
 
 	var user models.UserData
-	err = row.Scan(&user.Feed, &user.Name, &user.Image)
+	err = row.Scan(&user.Name, &user.Image)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return models.UserData{}, fmt.Errorf("%s: %w", op, storage.ErrUserNotFound)
@@ -163,13 +189,12 @@ func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, e
 	const op = "storage.sqlite.GetAuthors"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip, isFave
-		FROM authors
+		SELECT id, name, image, clip
+		FROM author
 		WHERE id IN (
-			SELECT DISTINCT CAST(json_each.key AS INTEGER)
-			FROM feed
-			CROSS JOIN json_each(feed.authors) AS json_each
-			WHERE feed.id = ?)
+			SELECT authorId
+			FROM authors
+			WHERE userId = ?)
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -184,7 +209,7 @@ func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, e
 	var authors []models.Author
 	for rows.Next() {
 		var author models.Author
-		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip, &author.IsFave)
+		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -203,14 +228,12 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	const op = "storage.sqlite.GetArticles"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip, isFave, description
-		FROM articles 
+		SELECT id, name, image, clip, description
+		FROM article
 		WHERE id IN (
-			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
-			FROM feed 
-			CROSS JOIN json_each(feed.articles) AS json_each 
-			WHERE feed.id = ?
-		)
+			SELECT articleId
+			FROM articles
+			WHERE userId = ?)
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -225,7 +248,7 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	var articles []models.Article
 	for rows.Next() {
 		var article models.Article
-		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.IsFave, &article.Description)
+		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.Description)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -244,14 +267,12 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 	const op = "storage.sqlite.GetPoets"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip, isFave
-		FROM poets 
+		SELECT id, name, image, clip
+		FROM poet
 		WHERE id IN (
-			SELECT DISTINCT CAST(json_each.key AS INTEGER) 
-			FROM feed 
-			CROSS JOIN json_each(feed.poets) AS json_each 
-			WHERE feed.id = ?
-		)
+			SELECT poetId
+			FROM poets
+			WHERE userId = ?)
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -266,7 +287,7 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 	var poets []models.Poet
 	for rows.Next() {
 		var poet models.Poet
-		err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip, &poet.IsFave)
+		err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -280,35 +301,6 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 	return poets, nil
 }
 
-// Feed retrieves the feed containing authors, articles, and poets for a given user ID.
-func (s *Storage) Feed(ctx context.Context, userId int64) (models.Feed, error) {
-	const op = "storage.sqlite.GetFeed"
-
-	authors, err := s.Authors(ctx, userId)
-	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
-	}
-
-	articles, err := s.Articles(ctx, userId)
-	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
-	}
-
-	poets, err := s.Poets(ctx, userId)
-	if err != nil {
-		return models.Feed{}, fmt.Errorf("%s: %w", op, err)
-	}
-
-	feed := models.Feed{
-		ID:       userId,
-		Authors:  authors,
-		Articles: articles,
-		Poets:    poets,
-	}
-
-	return feed, nil
-}
-
 // DeleteUser deletes a user by their ID.
 func (s *Storage) DeleteUser(ctx context.Context, userID int64) error {
 	const op = "storage.sqlite.DeleteUser"
@@ -318,13 +310,25 @@ func (s *Storage) DeleteUser(ctx context.Context, userID int64) error {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	stmtFeed, err := s.db.Prepare("DELETE FROM feed WHERE id = ?")
+	stmtAuthors, err := s.db.Prepare("DELETE FROM authors WHERE userId = ?")
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	stmtArticles, err := s.db.Prepare("DELETE FROM articles WHERE userId = ?")
+	if err != nil {
+		return fmt.Errorf("%s: %w", op, err)
+	}
+
+	stmtPoets, err := s.db.Prepare("DELETE FROM poets WHERE userId = ?")
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	_, err = stmt.ExecContext(ctx, userID)
-	_, err = stmtFeed.ExecContext(ctx, userID)
+	_, err = stmtAuthors.ExecContext(ctx, userID)
+	_, err = stmtArticles.ExecContext(ctx, userID)
+	_, err = stmtPoets.ExecContext(ctx, userID)
 	if err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -332,99 +336,69 @@ func (s *Storage) DeleteUser(ctx context.Context, userID int64) error {
 	return nil
 }
 
-// UpdateAuthorIsFave updates the isFave field for an author in the feed JSON by their ID.
-func (s *Storage) UpdateAuthorIsFave(ctx context.Context, userID int64, authorID int64, isFave string) error {
+// UpdateAuthorIsFave updates the isFave field for an author in the authors table by their userID and authorID.
+func (s *Storage) UpdateAuthorIsFave(ctx context.Context, userId int64, authorId int64) error {
 	const op = "storage.sqlite.UpdateAuthorIsFave"
 
-	var authorsJSON string
-	err := s.db.QueryRowContext(ctx, "SELECT authors FROM feed WHERE id = ?", userID).Scan(&authorsJSON)
+	var currentIsFave int
+	err := s.db.QueryRowContext(ctx, "SELECT isFave FROM authors WHERE userId = ? AND authorId = ?", userId, authorId).Scan(&currentIsFave)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("%s: author with userId %d and authorId %d not found", op, userId, authorId)
+		}
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	strBool, err := strconv.ParseBool(isFave)
-	old := !strBool
+	newIsFave := 1 - currentIsFave
 
-	updatedAuthorsJSON := strings.Replace(authorsJSON, fmt.Sprintf(`"%d":"%s"`, authorID, strconv.FormatBool(old)), fmt.Sprintf(`"%d":"%s"`, authorID, isFave), 1)
-
-	_, err = s.db.ExecContext(ctx, "UPDATE feed SET authors = ? WHERE id = ?", updatedAuthorsJSON, userID)
+	_, err = s.db.ExecContext(ctx, "UPDATE authors SET isFave = ? WHERE userId = ? AND authorId = ?", newIsFave, userId, authorId)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	rows, err := s.db.QueryContext(ctx, "SELECT * FROM authors")
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	if err := rows.Err(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	return nil
 }
 
-// UpdateArticleIsFave updates the isFave field for an article in the feed JSON by their ID.
-func (s *Storage) UpdateArticleIsFave(ctx context.Context, userID int64, articleID int64, isFave string) error {
+// UpdateArticleIsFave updates the isFave field for an article
+func (s *Storage) UpdateArticleIsFave(ctx context.Context, userId int64, articleId int64) error {
 	const op = "storage.sqlite.UpdateAuthorIsFave"
 
-	var articleJSON string
-	err := s.db.QueryRowContext(ctx, "SELECT articles FROM feed WHERE id = ?", userID).Scan(&articleJSON)
+	var currentIsFave int
+	err := s.db.QueryRowContext(ctx, "SELECT isFave FROM articles WHERE userId = ? AND articleId = ?", userId, articleId).Scan(&currentIsFave)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("%s: article with userId %d and articleId %d not found", op, userId, articleId)
+		}
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	strBool, err := strconv.ParseBool(isFave)
-	old := !strBool
+	newIsFave := 1 - currentIsFave
 
-	updatedArticleJSON := strings.Replace(articleJSON, fmt.Sprintf(`"%d":"%s"`, articleID, strconv.FormatBool(old)), fmt.Sprintf(`"%d":"%s"`, articleID, isFave), 1)
-
-	_, err = s.db.ExecContext(ctx, "UPDATE feed SET articles = ? WHERE id = ?", updatedArticleJSON, userID)
+	_, err = s.db.ExecContext(ctx, "UPDATE articles SET isFave = ? WHERE userId = ? AND articleId = ?", newIsFave, userId, articleId)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	rows, err := s.db.QueryContext(ctx, "SELECT * FROM articles")
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	if err := rows.Err(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
 	return nil
 }
 
-// UpdatePoetIsFave updates the isFave field for a poet in the feed JSON by their ID.
-func (s *Storage) UpdatePoetIsFave(ctx context.Context, userID int64, poetID int64, isFave string) error {
+// UpdatePoetIsFave updates the isFave field for a poet
+func (s *Storage) UpdatePoetIsFave(ctx context.Context, userId int64, poetId int64) error {
 	const op = "storage.sqlite.UpdateAuthorIsFave"
 
-	var poetJSON string
-	err := s.db.QueryRowContext(ctx, "SELECT poets FROM feed WHERE id = ?", userID).Scan(&poetJSON)
+	var currentIsFave int
+	err := s.db.QueryRowContext(ctx, "SELECT isFave FROM poets WHERE userId = ? AND poetId = ?", userId, poetId).Scan(&currentIsFave)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return fmt.Errorf("%s: poet with userId %d and poetId %d not found", op, userId, poetId)
+		}
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
-	strBool, err := strconv.ParseBool(isFave)
-	old := !strBool
+	newIsFave := 1 - currentIsFave
 
-	updatedPoetJSON := strings.Replace(poetJSON, fmt.Sprintf(`"%d":"%s"`, poetID, strconv.FormatBool(old)), fmt.Sprintf(`"%d":"%s"`, poetID, isFave), 1)
-
-	_, err = s.db.ExecContext(ctx, "UPDATE feed SET poets = ? WHERE id = ?", updatedPoetJSON, userID)
+	_, err = s.db.ExecContext(ctx, "UPDATE poets SET isFave = ? WHERE userId = ? AND poetId = ?", newIsFave, userId, poetId)
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-
-	rows, err := s.db.QueryContext(ctx, "SELECT * FROM poets")
-	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-
-	if err := rows.Err(); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
 
