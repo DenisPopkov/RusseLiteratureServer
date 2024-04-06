@@ -7,10 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/mattn/go-sqlite3"
+	"math/rand"
 	"sso/internal/domain/models"
 	"sso/internal/storage"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Storage struct {
@@ -35,27 +37,42 @@ func (s *Storage) Stop() error {
 func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (int64, error) {
 	const op = "storage.sqlite.SaveUser"
 
-	userStmt, err := s.db.Prepare("INSERT INTO users(phone, pass_hash, name, image) VALUES(?, ?, ?, ?)")
+	stmt, err := s.db.Prepare("INSERT INTO users(phone, pass_hash, name, image) VALUES(?, ?, ?, ?)")
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	authorStmt, err := s.db.Prepare("INSERT INTO authors(userId, authorId, isFave) VALUES(?, ?, 0)")
+	authorIDs, err := s.getAllIDsFromAuthors(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	articleStmt, err := s.db.Prepare("INSERT INTO articles(userId, articleId, isFave) VALUES(?, ?, 0)")
+	articleIDs, err := s.getAllIDsFromArticles(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	poetStmt, err := s.db.Prepare("INSERT INTO poets(userId, poetId, isFave) VALUES(?, ?, 0)")
+	poetIDs, err := s.getAllIDsFromPoets(ctx)
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	res, err := userStmt.ExecContext(ctx, phone, passHash, "", "")
+	authorsName := map[int]string{
+		0: "Фёдор Достоевский",
+		1: "Антон Чехов",
+		2: "Лев Толстой",
+	}
+
+	authorsImage := map[int]string{
+		0: "https://iili.io/JwdlbqJ.png",
+		1: "https://iili.io/Jwdlg0x.png",
+		2: "https://iili.io/Jwdl6JV.png",
+	}
+
+	rand.New(rand.NewSource(time.Now().UnixNano()))
+	randomKey := rand.Intn(len(authorsName))
+
+	res, err := stmt.ExecContext(ctx, phone, passHash, authorsName[randomKey], authorsImage[randomKey])
 	if err != nil {
 		var sqliteErr sqlite3.Error
 		if errors.As(err, &sqliteErr) && errors.Is(sqliteErr.ExtendedCode, sqlite3.ErrConstraintUnique) {
@@ -69,71 +86,97 @@ func (s *Storage) SaveUser(ctx context.Context, phone string, passHash []byte) (
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
-	var authorIDs []int64
-	var poetIDs []int64
-	var articleIDs []int64
-
-	rows, err := s.db.QueryContext(ctx, "SELECT authorId FROM authors")
-	if err != nil {
-		return id, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var authorID int64
-		if err := rows.Scan(&authorID); err != nil {
-			return id, fmt.Errorf("%s: %w", op, err)
-		}
-		authorIDs = append(authorIDs, authorID)
-	}
-
-	rows, err = s.db.QueryContext(ctx, "SELECT poetId FROM poets")
-	if err != nil {
-		return id, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var poetID int64
-		if err := rows.Scan(&poetID); err != nil {
-			return id, fmt.Errorf("%s: %w", op, err)
-		}
-		poetIDs = append(poetIDs, poetID)
-	}
-
-	rows, err = s.db.QueryContext(ctx, "SELECT articleId FROM articles")
-	if err != nil {
-		return id, fmt.Errorf("%s: %w", op, err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		var articleID int64
-		if err := rows.Scan(&articleID); err != nil {
-			return id, fmt.Errorf("%s: %w", op, err)
-		}
-		articleIDs = append(articleIDs, articleID)
-	}
-
 	for _, authorID := range authorIDs {
-		_, err := authorStmt.ExecContext(ctx, id, authorID)
+		_, err = s.db.ExecContext(ctx, "INSERT INTO authors(userId, authorId, isFave) VALUES(?, ?, 0)", id, authorID)
 		if err != nil {
-			return id, fmt.Errorf("%s: %w", op, err)
-		}
-	}
-
-	for _, poetID := range poetIDs {
-		_, err := poetStmt.ExecContext(ctx, id, poetID)
-		if err != nil {
-			return id, fmt.Errorf("%s: %w", op, err)
+			return id, fmt.Errorf("%s: failed to insert author: %w", op, err)
 		}
 	}
 
 	for _, articleID := range articleIDs {
-		_, err := articleStmt.ExecContext(ctx, id, articleID)
+		_, err = s.db.ExecContext(ctx, "INSERT INTO articles(userId, articleId, isFave) VALUES(?, ?, 0)", id, articleID)
 		if err != nil {
-			return id, fmt.Errorf("%s: %w", op, err)
+			return id, fmt.Errorf("%s: failed to insert article: %w", op, err)
+		}
+	}
+
+	for _, poetID := range poetIDs {
+		_, err = s.db.ExecContext(ctx, "INSERT INTO poets(userId, poetId, isFave) VALUES(?, ?, 0)", id, poetID)
+		if err != nil {
+			return id, fmt.Errorf("%s: failed to insert poet: %w", op, err)
 		}
 	}
 
 	return id, nil
+}
+
+func (s *Storage) getAllIDsFromAuthors(ctx context.Context) ([]int, error) {
+	query := fmt.Sprintf("SELECT id FROM author")
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return ids, nil
+}
+
+func (s *Storage) getAllIDsFromArticles(ctx context.Context) ([]int, error) {
+	query := fmt.Sprintf("SELECT id FROM article")
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return ids, nil
+}
+
+func (s *Storage) getAllIDsFromPoets(ctx context.Context) ([]int, error) {
+	query := fmt.Sprintf("SELECT id FROM poet")
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var ids []int
+	for rows.Next() {
+		var id int
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		ids = append(ids, id)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return ids, nil
 }
 
 // User returns user by phone.
@@ -189,12 +232,10 @@ func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, e
 	const op = "storage.sqlite.GetAuthors"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip
-		FROM author
-		WHERE id IN (
-			SELECT authorId
-			FROM authors
-			WHERE userId = ?)
+		SELECT a.id, a.name, a.image, a.clip, ua.isFave
+		FROM author AS a
+		INNER JOIN authors AS ua ON a.id = ua.authorId
+		WHERE ua.userId = ?
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -209,7 +250,7 @@ func (s *Storage) Authors(ctx context.Context, userId int64) ([]models.Author, e
 	var authors []models.Author
 	for rows.Next() {
 		var author models.Author
-		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip)
+		err := rows.Scan(&author.ID, &author.Name, &author.Image, &author.Clip, &author.IsFave)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -228,12 +269,10 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	const op = "storage.sqlite.GetArticles"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip, description
-		FROM article
-		WHERE id IN (
-			SELECT articleId
-			FROM articles
-			WHERE userId = ?)
+		SELECT a.id, a.name, a.image, a.clip, a.description, ua.isFave
+		FROM article AS a
+		INNER JOIN articles AS ua ON a.id = ua.articleId
+		WHERE ua.userId = ?
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -248,7 +287,7 @@ func (s *Storage) Articles(ctx context.Context, userId int64) ([]models.Article,
 	var articles []models.Article
 	for rows.Next() {
 		var article models.Article
-		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.Description)
+		err := rows.Scan(&article.ID, &article.Name, &article.Image, &article.Clip, &article.Description, &article.IsFave)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
@@ -267,12 +306,10 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 	const op = "storage.sqlite.GetPoets"
 
 	stmt, err := s.db.Prepare(`
-		SELECT id, name, image, clip
-		FROM poet
-		WHERE id IN (
-			SELECT poetId
-			FROM poets
-			WHERE userId = ?)
+		SELECT p.id, p.name, p.image, p.clip, ua.isFave
+		FROM poet AS p
+		INNER JOIN poets AS ua ON p.id = ua.poetId
+		WHERE ua.userId = ?
 	`)
 	if err != nil {
 		return nil, fmt.Errorf("%s: %w", op, err)
@@ -287,7 +324,7 @@ func (s *Storage) Poets(ctx context.Context, userId int64) ([]models.Poet, error
 	var poets []models.Poet
 	for rows.Next() {
 		var poet models.Poet
-		err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip)
+		err := rows.Scan(&poet.ID, &poet.Name, &poet.Image, &poet.Clip, &poet.IsFave)
 		if err != nil {
 			return nil, fmt.Errorf("%s: %w", op, err)
 		}
