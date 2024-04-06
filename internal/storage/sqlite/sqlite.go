@@ -3,15 +3,12 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/mattn/go-sqlite3"
 	"math/rand"
 	"sso/internal/domain/models"
 	"sso/internal/storage"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -446,18 +443,39 @@ func (s *Storage) UpdatePoetIsFave(ctx context.Context, userId int64, poetId int
 func (s *Storage) GetClip(ctx context.Context, clipID int64) (models.Clip, error) {
 	const op = "storage.sqlite.GetClip"
 
-	var clipJSON string
-	err := s.db.QueryRowContext(ctx, "SELECT text FROM clip WHERE id = ?", clipID).Scan(&clipJSON)
+	stmtClipText, err := s.db.Prepare("SELECT text, title FROM clipText WHERE clipTextId = ?")
 	if err != nil {
 		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
 	}
+	defer stmtClipText.Close()
 
-	clipJSON = strings.TrimPrefix(clipJSON, "\xef\xbb\xbf")
-
-	var clipData struct {
-		Clip []models.ClipText `json:"clip"`
+	rows, err := stmtClipText.QueryContext(ctx, clipID)
+	if err != nil {
+		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
 	}
-	err = json.Unmarshal([]byte(clipJSON), &clipData)
+	defer rows.Close()
+
+	var clipTexts []models.ClipText
+
+	for rows.Next() {
+		var clipText models.ClipText
+		if err := rows.Scan(&clipText.Text, &clipText.Title); err != nil {
+			return models.Clip{}, fmt.Errorf("%s: %w", op, err)
+		}
+		clipTexts = append(clipTexts, clipText)
+	}
+	if err := rows.Err(); err != nil {
+		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	stmtClip, err := s.db.Prepare("SELECT id FROM clip WHERE id = ?")
+	if err != nil {
+		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
+	}
+	defer stmtClip.Close()
+
+	var clip models.Clip
+	err = stmtClip.QueryRowContext(ctx, clipID).Scan(&clip.ID)
 	if err != nil {
 		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
 	}
@@ -467,11 +485,8 @@ func (s *Storage) GetClip(ctx context.Context, clipID int64) (models.Clip, error
 		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	clip := models.Clip{
-		ID:   clipID,
-		Text: clipData.Clip,
-		Quiz: quiz,
-	}
+	clip.Text = clipTexts
+	clip.Quiz = quiz
 
 	return clip, nil
 }
@@ -480,41 +495,46 @@ func (s *Storage) GetClip(ctx context.Context, clipID int64) (models.Clip, error
 func (s *Storage) GetQuiz(ctx context.Context, quizID int64) (models.Quiz, error) {
 	const op = "storage.sqlite.GetQuiz"
 
-	var quizData models.Quiz
-	var answersJSON string
-	err := s.db.QueryRowContext(ctx, "SELECT id, question, description, image, answers FROM quiz WHERE id = ?", quizID).Scan(&quizData.ID, &quizData.Question, &quizData.Description, &quizData.Image, &answersJSON)
+	stmtAnswers, err := s.db.Prepare("SELECT id, text, isRight FROM answers WHERE id = ?")
 	if err != nil {
 		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
 	}
+	defer stmtAnswers.Close()
 
-	answersJSON = strings.TrimPrefix(answersJSON, "\xef\xbb\xbf")
-
-	var answersMap map[string][]int64
-	err = json.Unmarshal([]byte(answersJSON), &answersMap)
+	rows, err := stmtAnswers.QueryContext(ctx, quizID)
 	if err != nil {
 		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
 	}
+	defer rows.Close()
 
 	var answers []models.Answer
-	answerIDs, ok := answersMap[strconv.FormatInt(quizID, 10)]
-	if !ok {
-		return models.Quiz{}, fmt.Errorf("%s: no answers found for quiz ID %d", op, quizID)
-	}
 
-	for _, answerID := range answerIDs {
+	for rows.Next() {
 		var answer models.Answer
-		err := s.db.QueryRowContext(ctx, "SELECT id, text, isRight FROM answers WHERE id = ?", answerID).
-			Scan(&answer.ID, &answer.Text, &answer.IsRight)
-		if err != nil {
+		if err := rows.Scan(&answer.ID, &answer.Text, &answer.IsRight); err != nil {
 			return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
 		}
-
 		answers = append(answers, answer)
 	}
+	if err := rows.Err(); err != nil {
+		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
+	}
 
-	quizData.Answers = answers
+	stmtQuiz, err := s.db.Prepare("SELECT id, question, description, image FROM quiz WHERE id = ?")
+	if err != nil {
+		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
+	}
+	defer stmtQuiz.Close()
 
-	return quizData, nil
+	var quiz models.Quiz
+	err = stmtQuiz.QueryRowContext(ctx, quizID).Scan(&quiz.ID, &quiz.Question, &quiz.Description, &quiz.Image)
+	if err != nil {
+		return models.Quiz{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	quiz.Answers = answers
+
+	return quiz, nil
 }
 
 func (s *Storage) App(ctx context.Context) (models.App, error) {
