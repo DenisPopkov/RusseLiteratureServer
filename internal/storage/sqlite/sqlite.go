@@ -468,14 +468,14 @@ func (s *Storage) GetClip(ctx context.Context, clipID int64) (models.Clip, error
 		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
 	}
 
-	stmtClip, err := s.db.Prepare("SELECT id FROM clip WHERE id = ?")
+	stmtClip, err := s.db.Prepare("SELECT id, image FROM clip WHERE id = ?")
 	if err != nil {
 		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
 	}
 	defer stmtClip.Close()
 
 	var clip models.Clip
-	err = stmtClip.QueryRowContext(ctx, clipID).Scan(&clip.ID)
+	err = stmtClip.QueryRowContext(ctx, clipID).Scan(&clip.ID, &clip.Image)
 	if err != nil {
 		return models.Clip{}, fmt.Errorf("%s: %w", op, err)
 	}
