@@ -36,7 +36,7 @@ sso
 
 ## Запросы
 
-### Get
+### GET
 
 ```http request
 GET http://localhost:4041/authors
@@ -217,7 +217,7 @@ Authorization: Bearer token
   "image": "https://iili.io/JwdlbqJ.png"
 }
 ```
----
+### PATCH
 ```http request
 PATCH http://localhost:4041/authors?authorId=1001
 Content-Type: application/json
@@ -248,7 +248,7 @@ Authorization: Bearer token
   "body": "Response body is empty"
 }
 ```
----
+### DELETE
 ```http request
 DELETE http://localhost:4041/user
 Authorization: Bearer token
