@@ -75,14 +75,13 @@ func New(
 func (c *Core) GetAuthorHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.GetAuthorHandler"
 
-	userIdStr := r.URL.Query().Get("userId")
-	userId, err := strconv.Atoi(userIdStr)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
-	authors, err := c.authorProvider.Authors(r.Context(), int64(userId))
+	authors, err := c.authorProvider.Authors(r.Context(), uid)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -98,14 +97,13 @@ func (c *Core) GetAuthorHandler(w http.ResponseWriter, r *http.Request) {
 func (c *Core) GetArticlesHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.GetArticlesHandler"
 
-	userIdStr := r.URL.Query().Get("userId")
-	userId, err := strconv.Atoi(userIdStr)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
-	articles, err := c.articleProvider.Articles(r.Context(), int64(userId))
+	articles, err := c.articleProvider.Articles(r.Context(), uid)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -121,15 +119,13 @@ func (c *Core) GetArticlesHandler(w http.ResponseWriter, r *http.Request) {
 func (c *Core) GetPoetsHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.GetPoetsHandler"
 
-	// Parse userId from query parameters
-	userIdStr := r.URL.Query().Get("userId")
-	userId, err := strconv.Atoi(userIdStr)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
-	poets, err := c.poetProvider.Poets(r.Context(), int64(userId))
+	poets, err := c.poetProvider.Poets(r.Context(), uid)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -145,14 +141,13 @@ func (c *Core) GetPoetsHandler(w http.ResponseWriter, r *http.Request) {
 func (c *Core) DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.DeleteUserHandler"
 
-	userIDStr := r.URL.Query().Get("userId")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
-	err = c.userProvider.DeleteUser(r.Context(), userID)
+	err := c.userProvider.DeleteUser(r.Context(), uid)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -165,10 +160,9 @@ func (c *Core) DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 func (c *Core) UpdateAuthorIsFaveHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.UpdateAuthorIsFaveHandler"
 
-	userIDStr := r.URL.Query().Get("userId")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
@@ -179,7 +173,7 @@ func (c *Core) UpdateAuthorIsFaveHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	err = c.authorProvider.UpdateAuthorIsFave(r.Context(), userID, authorID)
+	err = c.authorProvider.UpdateAuthorIsFave(r.Context(), uid, authorID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -192,10 +186,9 @@ func (c *Core) UpdateAuthorIsFaveHandler(w http.ResponseWriter, r *http.Request)
 func (c *Core) UpdateArticleIsFaveHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.UpdateArticleIsFaveHandler"
 
-	userIDStr := r.URL.Query().Get("userId")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
@@ -206,7 +199,7 @@ func (c *Core) UpdateArticleIsFaveHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = c.articleProvider.UpdateArticleIsFave(r.Context(), userID, articleID)
+	err = c.articleProvider.UpdateArticleIsFave(r.Context(), uid, articleID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -219,10 +212,9 @@ func (c *Core) UpdateArticleIsFaveHandler(w http.ResponseWriter, r *http.Request
 func (c *Core) UpdatePoetIsFaveHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.UpdatePoetIsFaveHandler"
 
-	userIDStr := r.URL.Query().Get("userId")
-	userID, err := strconv.ParseInt(userIDStr, 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
@@ -233,7 +225,7 @@ func (c *Core) UpdatePoetIsFaveHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = c.poetProvider.UpdatePoetIsFave(r.Context(), userID, poetID)
+	err = c.poetProvider.UpdatePoetIsFave(r.Context(), uid, poetID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return
@@ -292,14 +284,13 @@ func (c *Core) GetQuizHandler(w http.ResponseWriter, r *http.Request) {
 func (c *Core) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	const op = "core.GetUserHandler"
 
-	userIdStr := r.URL.Query().Get("userId")
-	userId, err := strconv.ParseInt(userIdStr, 10, 64)
-	if err != nil {
-		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusBadRequest)
+	uid, ok := r.Context().Value("uid").(int64)
+	if !ok {
+		http.Error(w, "UID not found in context", http.StatusInternalServerError)
 		return
 	}
 
-	clips, err := c.userProvider.GetUser(r.Context(), userId)
+	clips, err := c.userProvider.GetUser(r.Context(), uid)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("%s: %v", op, err), http.StatusInternalServerError)
 		return

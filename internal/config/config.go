@@ -13,7 +13,7 @@ type Config struct {
 	GRPC           GRPCConfig `yaml:"grpc"`
 	REST           RESTConfig `yaml:"rest"`
 	MigrationsPath string
-	TokenTTL       time.Duration `yaml:"token_ttl" env-default:"1h"`
+	TokenTTL       time.Duration `yaml:"token_ttl" env-default:"720h"`
 }
 
 type GRPCConfig struct {
