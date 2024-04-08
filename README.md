@@ -29,3 +29,7 @@ sso
 ├── storage.......... Файлы хранилища, например SQLite базы данных
 └── tests............ Функциональные тесты
 ```
+
+## База данных
+
+<img width="350" alt="image" src="https://github.com/DenisPopkov/RusseLiteratureServer/assets/57343209/f36b8202-2881-4e43-9836-73e6af7f0458">
